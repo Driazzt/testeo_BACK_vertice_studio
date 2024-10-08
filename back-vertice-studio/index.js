@@ -1,52 +1,51 @@
-const express = require ("express");
-const PORT = 3000;
+const express = require("express");
+const PORT = process.env.POSTGRES_PORT || 5432; // 5432 puerto postgres // 3000 recommended for MONGODB
 const mongoose = require("mongoose");
-const swaggerConfig = require("./swaggerConfig");
-const swaggerUI = require("swagger-ui-express");
-const { Client } = require ("pg")
+// const swaggerConfig = require("./swaggerConfig");
+// const swaggerUI = require("swagger-ui-express");
+const { Client } = require("pg");
+const loginRouter = require("./Routes/loginRouter");
 require("dotenv").config();
+
 const app = express();
 app.use(express.json());
 
+// Connect to MongoDB
+// const url_mongodb = process.env.DATA_URL_MONGO;
+// mongoose.connect(url_mongodb);
 
-// Connect MongoDB
+// const db = mongoose.connection;
 
-const url_mongodb = process.env.DATA_URL_MONGO;
-mongoose.connect(url_mongodb);
+// db.on("error", (error) => {
+//     console.log("Error connecting with Mongo:", error);
+// });
+ 
+// db.on("connected", () => {
+//     console.log("Successfully connected to MongoDB");
+// });
 
-const db = mongoose.connection;
+// db.on("disconnected", () => {
+//     console.log("MongoDB is disconnected");
+// });
 
-db.on("error", (error) => {
-    console.log("Error connecting with Mongo")
-});
-
-db.on("connected", () => {
-    console.log("Success connect")
-});
-
-db.on("disconnected", () => {
-    console.log("Mongo is disconnected")
-});
-
-app.use("/login", loginRouter);
-
-app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`)
-})
-
-//Connect PostgresSql
-
+// Connect to PostgreSQL
 const client = new Client({
-  host: process.env.POSTGRES_HOST,     
-  port: process.env.POSTGRES_URL,      
-  user: process.env.POSTGRES_USER,      
-  password: process.env.POSTGRES_PASSWORD,
-  database: process.env.POSTGRES_DATABASE, 
+    host: process.env.POSTGRES_HOST,
+    port: process.env.POSTGRES_PORT,
+    user: process.env.POSTGRES_USER,
+    password: process.env.POSTGRES_PASSWORD,
+    database: process.env.POSTGRES_DATABASE,
+    ssl: { rejectUnauthorized: false },
 });
 
 client.connect()
-  .then(() => console.log('Conectado a la base de datos!'))
-  .catch(err => console.error('Error de conexión', err.stack));
+    .then(() => console.log('Successfully connected to PostgreSQL'))
+    .catch(err => console.error('Error connecting to PostgreSQL', err.stack));
 
+
+app.use("/login", loginRouter);
+app.listen(PORT, () => {
+    console.log(`Server running at http://localhost:${PORT}`);
+});
 
 module.exports = app;
