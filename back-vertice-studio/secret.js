@@ -1,7 +1,7 @@
 const crypto = require("crypto");
 
 const secretPassword = "VerticeStudioPassword1";
-const secretPasswordRefreshed = "VerticeStudioPasswordR";
+const secretPasswordRefreshed = "VerticeStudioPasswordRefreshed";
 
 const hash = crypto
 .createHmac ("sha256", secretPassword)
