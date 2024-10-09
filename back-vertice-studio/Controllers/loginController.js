@@ -1,9 +1,10 @@
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
+require("dotenv").config();
 const { Pool } = require('pg');
 
 const pool = new Pool({
-  connectionString: "postgres://default:vZK1N7gJFMpu@ep-nameless-cherry-a2yrl6t6-pooler.eu-central-1.aws.neon.tech:5432/verceldb?sslmode=require",
+  connectionString: process.env.POSTGRES_URL
 });
 
 
