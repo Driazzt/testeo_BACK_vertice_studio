@@ -31,7 +31,7 @@ updatePasswords();
 
 
 const register = async (req, res) => {
-  const { email, password, username, firstName, lastName, userRole = 'user' } = req.body;
+  const { email, password, username, firstName, lastName } = req.body;
 
   try {
     const userExists = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
@@ -46,11 +46,10 @@ const register = async (req, res) => {
     console.log("Username", username);
     console.log("First name:", firstName);
     console.log("Last name:", lastName);
-    console.log("User Role", userRole);
 
    const newUser = await pool.query(
-      'INSERT INTO users (email, password, username, first_name, last_name, user_role) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-      [email, hashedPassword, username, firstName, lastName, userRole]
+      'INSERT INTO users (email, password, username, first_name, last_name) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      [email, hashedPassword, username, firstName, lastName]
     );
 
     res.status(201).json({ message: 'User registered', user: newUser.rows[0] });
