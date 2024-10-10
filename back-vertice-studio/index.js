@@ -36,6 +36,27 @@ pool.connect()
     .catch(err => console.error('Error connecting to PostgreSQL', err.stack));
 
 
+// Connect to MongoDB
+
+// const url_mongodb = process.env.DATA_URL_MONGO;
+// mongoose.connect(url_mongodb);
+
+// const db = mongoose.connection;
+
+// db.on("error", (error) => {
+//   console.log("Error en la conexión con Mongo");
+// });
+
+// db.on("connected", () => {
+//   console.log("Success connect");
+// });
+
+// db.on("disconnected", () => {
+//   console.log("Mongo is disconnected");
+// });
+
+
+
 app.use("/login", loginRouter);
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
