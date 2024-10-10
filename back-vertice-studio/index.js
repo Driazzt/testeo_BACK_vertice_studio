@@ -1,5 +1,6 @@
 const express = require("express");
-const PORT = process.env.POSTGRES_PORT || 5432; // 5432 puerto postgres // 3000 recommended for MONGODB
+const PORT1 = process.env.POSTGRES_PORT || 5432; // 5432 puerto postgres // 3000 recommended for MONGODB
+const PORT2 = process.env.PORTMONGO || 8000
 const mongoose = require("mongoose");
 const loginRouter = require("./Routes/loginRouter");
 require("dotenv").config();
@@ -58,8 +59,13 @@ pool.connect()
 
 
 app.use("/login", loginRouter);
-app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
+app.listen(PORT1, () => {
+    console.log(`Server running at http://localhost:${PORT1}`);
 });
+
+
+app.listen(PORT2, () => {
+    console.log(`Server is running at http://localhost:${PORT2}`);
+  });
 
 module.exports = {app, pool};
