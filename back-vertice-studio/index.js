@@ -7,6 +7,16 @@ const app = express();
 app.use(express.json());
 const { Pool } = require("pg");
 
+
+const cors = require('cors');
+app.use(cors({
+    origin: 'http://localhost:3000',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    credentials: true
+  }));
+  app.use(express.json());
+
+
 // Connect to PostgreSQL
 const pool = new Pool({
     host: process.env.POSTGRES_HOST,

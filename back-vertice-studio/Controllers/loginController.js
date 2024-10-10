@@ -31,7 +31,7 @@ updatePasswords();
 
 
 const register = async (req, res) => {
-  const { email, password, username, firstName, lastName, userRole } = req.body;
+  const { email, password, username, firstName, lastName, userRole = 'user' } = req.body;
 
   try {
     const userExists = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
