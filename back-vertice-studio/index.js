@@ -39,22 +39,22 @@ pool.connect()
 
 // Connect to MongoDB
 
-// const url_mongodb = process.env.DATA_URL_MONGO;
-// mongoose.connect(url_mongodb);
+const url_mongodb = process.env.DATA_URL_MONGO;
+mongoose.connect(url_mongodb);
 
-// const db = mongoose.connection;
+const db = mongoose.connection;
 
-// db.on("error", (error) => {
-//   console.log("Error en la conexión con Mongo");
-// });
+db.on("error", (error) => {
+  console.log("Error en la conexión con Mongo");
+});
 
-// db.on("connected", () => {
-//   console.log("Success connect");
-// });
+db.on("connected", () => {
+  console.log("Success connect");
+});
 
-// db.on("disconnected", () => {
-//   console.log("Mongo is disconnected");
-// });
+db.on("disconnected", () => {
+  console.log("Mongo is disconnected");
+});
 
 
 
