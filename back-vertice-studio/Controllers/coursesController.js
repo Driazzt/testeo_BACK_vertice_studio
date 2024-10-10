@@ -42,4 +42,7 @@ const getAllCourses = async (req, res) => {
   module.exports = {
     getAllCourses,
     createCourses,
+    // getCoursesById,
+    // updateCoursesById,
+    // deleteCoursesById,
   }

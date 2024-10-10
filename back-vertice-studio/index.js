@@ -57,8 +57,8 @@ db.on("disconnected", () => {
 });
 
 
-
 app.use("/login", loginRouter);
+
 app.listen(PORT1, () => {
     console.log(`Server running at http://localhost:${PORT1}`);
 });
