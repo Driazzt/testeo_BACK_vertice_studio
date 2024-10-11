@@ -1,21 +1,28 @@
 const express = require("express");
-const PORT1 = process.env.POSTGRES_PORT || 5432; // 5432 puerto postgres // 3000 recommended for MONGODB
-const PORT2 = process.env.PORTMONGO || 8000
 const mongoose = require("mongoose");
 const loginRouter = require("./Routes/loginRouter");
+const coursesRouter = require("./Routes/coursesRouter");
 require("dotenv").config();
-const app = express();
-app.use(express.json());
+const PORT1 = process.env.POSTGRES_PORT || 5432;
+const PORT2 = process.env.PORTMONGO || 8000;
+const appPostgres = express();
+const appMongo = express();
 const { Pool } = require("pg");
 
 
 const cors = require('cors');
-app.use(cors({
-    origin: 'http://localhost:3000',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-    credentials: true
-  }));
-  app.use(express.json());
+const corsOptions = {
+  origin: 'http://localhost:3000',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  credentials: true
+};
+  appPostgres.use(express.json());
+  appMongo.use(express.json());
+
+  appPostgres.use(cors(corsOptions));
+  appMongo.use(cors(corsOptions));
+
+
 
 
 // Connect to PostgreSQL
@@ -57,15 +64,16 @@ db.on("disconnected", () => {
 });
 
 
-app.use("/login", loginRouter);
+appPostgres.use("/login", loginRouter);
+appMongo.use("/courses", coursesRouter)
 
-app.listen(PORT1, () => {
+appPostgres.listen(PORT1, () => {
     console.log(`Server running at http://localhost:${PORT1}`);
 });
 
 
-app.listen(PORT2, () => {
+appMongo.listen(PORT2, () => {
     console.log(`Server is running at http://localhost:${PORT2}`);
   });
 
-module.exports = {app, pool};
+module.exports = {appPostgres, appMongo, pool};
