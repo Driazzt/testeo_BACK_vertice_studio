@@ -1,5 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const swaggerConfig = require("./swaggerConfig");
+const swaggerUI = require("swagger-ui-express");
 const loginRouter = require("./Routes/loginRouter");
 const coursesRouter = require("./Routes/coursesRouter");
 require("dotenv").config();
@@ -23,9 +25,8 @@ const corsOptions = {
   appMongo.use(cors(corsOptions));
 
 
-
-
 // Connect to PostgreSQL
+
 const pool = new Pool({
     host: process.env.POSTGRES_HOST,
     port: process.env.POSTGRES_PORT,
@@ -63,9 +64,14 @@ db.on("disconnected", () => {
   console.log("Mongo is disconnected");
 });
 
+// Rutas:
 
 appPostgres.use("/login", loginRouter);
-appMongo.use("/courses", coursesRouter)
+appMongo.use("/courses", coursesRouter);
+appMongo.use("/api-doc", swaggerUI.serve, swaggerUI.setup(swaggerConfig));
+
+
+// Puertos:
 
 appPostgres.listen(PORT1, () => {
     console.log(`Server running at http://localhost:${PORT1}`);
