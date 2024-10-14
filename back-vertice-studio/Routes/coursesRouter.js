@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const verifyToken = require("../Middlewares/auth")
 
 //!Enrutados
 
@@ -80,8 +81,8 @@ router.post("/createCourses", createCourses);
 
 
 
-router.get("/getCoursesById/:idCourses", verifyToken, getCoursesById);
-router.patch("/updateCourse/:idCourses", verifyToken, updateCoursesById);
-router.delete("/deleteCourse/:idCourses", verifyToken, deleteCoursesById);
+router.get("/getCoursesById/:_id", verifyToken, getCoursesById);
+router.patch("/updateCourse/:_id", verifyToken, updateCoursesById);
+router.delete("/deleteCourse/:_id", verifyToken, deleteCoursesById);
 
 module.exports = router;

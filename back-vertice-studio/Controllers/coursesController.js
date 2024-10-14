@@ -40,7 +40,7 @@ const createCourses = async (req, res) => {
 
 const getCoursesById = async (req, res) => {
   try {
-    const course = await coursesModel.findById(req.params.id);
+    const course = await coursesModel.findById(req.params._id);
     if (!course) {
       return res.status(404).json({ status: "Failed", message: "Course not found" });
     }
@@ -62,7 +62,7 @@ const updateCoursesById = async (req, res) => {
       price,
     } = req.body;
     const course = await coursesModel.findByIdAndUpdate(
-      req.params.id,
+      req.params._id,
       {
         title,
         description,
@@ -85,7 +85,7 @@ const updateCoursesById = async (req, res) => {
 
 const deleteCoursesById = async (req, res) => {
   try {
-    const course = await coursesModel.findByIdAndDelete(req.params.id);
+    const course = await coursesModel.findByIdAndDelete(req.params._id);
     if (!course) {
       return res.status(404).json({ status: "Failed", message: "Course not found" });
     }
