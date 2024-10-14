@@ -52,7 +52,7 @@ const emailSignupTemplate = `
             <h1>Welcome to Vertice Studio!</h1>
         </div>
         <div class="email-content">
-            <p>Hello {{name}},</p>
+            <p>Hello {{username}},</p>
             <p>Welcome to {{my_company}}! We are thrilled to have you join our community. Your registration marks the beginning of an exciting journey, and we can't wait to see all the incredible things you'll achieve with our service.</p>
             <p>To get started and unlock all the features we have to offer, please verify your email address by clicking the button below:</p>
             <p>If you did not create this account, you can ignore this email or contact our support team.</p>

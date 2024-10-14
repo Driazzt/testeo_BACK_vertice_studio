@@ -2,6 +2,11 @@ const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
 require("dotenv").config();
 const { Pool } = require('pg');
+const replaceTemplateEmail = require('../Templates/replaceTemplateEmail');
+const { emailSignupTemplate } = require('../Templates/template');
+const { sendMail } = require('../Services/services');
+
+
 
 const pool = new Pool({
   connectionString: process.env.POSTGRES_URL,
@@ -54,6 +59,22 @@ const register = async (req, res) => {
       'INSERT INTO users (email, password, username, first_name, last_name) VALUES ($1, $2, $3, $4, $5) RETURNING *',
       [email, hashedPassword, username, firstName, lastName]
     );
+
+    const user = newUser.rows[0];
+
+    const userTemplate = {
+      name: user.first_name,
+      username: user.username,
+      my_company: 'Grupo Vertice',
+      company_address: 'Montalban, 3 , 29002, Malaga',
+      email: user.email,
+      role: user.role
+    };
+
+    const subject = `Many thanks for the support to our community ${userTemplate.name}`;
+    const html = replaceTemplateEmail(emailSignupTemplate, userTemplate);
+
+    await sendMail(user.email, subject, html);
 
     res.status(201).json({ message: 'User registered', user: newUser.rows[0] });
   } catch (error) {
