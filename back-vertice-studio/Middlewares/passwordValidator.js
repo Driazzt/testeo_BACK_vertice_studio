@@ -1,8 +1,8 @@
 const passwordValidator = (req, res, next) => {
     const { password } = req.body;
   
-    // Definir el patrón de validación: al menos 8 caracteres, una letra mayúscula, una minúscula y un número
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/;
+    // Definir el patrón de validación: al menos 8 caracteres, una letra mayúscula, una minúscula, numero y un carácter especial.
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
   
     if (!passwordRegex.test(password)) {
       return res.status(400).json({
