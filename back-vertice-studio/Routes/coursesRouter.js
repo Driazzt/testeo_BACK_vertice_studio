@@ -28,7 +28,6 @@ router.get("/getAllCourses", getAllCourses);
  *        description: Error.
  */
 
-
 router.post("/createCourses", createCourses);
 /**
  * @swagger
@@ -79,9 +78,31 @@ router.post("/createCourses", createCourses);
  *        description: Error al crear un nuevo curso
  */
 
-
-
 router.get("/getCoursesById/:_id", verifyToken, getCoursesById);
+/**
+ * @swagger
+ * /courses/getCoursesById/{_id}:
+ *  get:
+ *    summary: Obtener los cursos por ID
+ *    parameters:
+ *      - in: path
+ *        name: _id
+ *        require: true
+ *        description: ID del curso
+ *        schema:
+ *          type: string
+ *      - in: header
+ *        name: auth-token
+ *        require: true
+ *        schema:
+ *          type: string
+ *    responses:
+ *      201:
+ *        description: Success
+ *      404:
+ *        description: Error al obtener los cursos por ID
+ */
+
 router.patch("/updateCourse/:_id", verifyToken, updateCoursesById);
 router.delete("/deleteCourse/:_id", verifyToken, deleteCoursesById);
 
