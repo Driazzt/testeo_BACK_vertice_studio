@@ -6,15 +6,12 @@ const replaceTemplateEmail = require('../Templates/replaceTemplateEmail');
 const { emailSignupTemplate } = require('../Templates/template');
 const { sendMail } = require('../Services/services');
 
-
-
 const pool = new Pool({
   connectionString: process.env.POSTGRES_URL,
   connectionTimeoutMillis: 5000,
   idleTimeoutMillis: 1200000,
   keepAlive: true,
 });
-
 
 const updatePasswords = async () => {
   try {
@@ -37,7 +34,6 @@ const updatePasswords = async () => {
 
 updatePasswords();
 
-
 const register = async (req, res) => {
   const { email, password, username, firstName, lastName } = req.body;
 
@@ -55,12 +51,17 @@ const register = async (req, res) => {
     console.log("First name:", firstName);
     console.log("Last name:", lastName);
 
-   const newUser = await pool.query(
+    const newUser = await pool.query(
       'INSERT INTO users (email, password, username, first_name, last_name) VALUES ($1, $2, $3, $4, $5) RETURNING *',
       [email, hashedPassword, username, firstName, lastName]
     );
 
     const user = newUser.rows[0];
+
+    // Generar un token de validación
+    const validationToken = jwt.sign({ userId: user.id, email: user.email }, process.env.JWT_SECRET, {
+      expiresIn: '1d',
+    });
 
     const userTemplate = {
       name: user.first_name,
@@ -68,10 +69,11 @@ const register = async (req, res) => {
       my_company: 'Grupo Vertice',
       company_address: 'Montalban, 3 , 29002, Malaga',
       email: user.email,
-      role: user.role
+      role: user.role,
+      verification_link: `https://yourdomain.com/verify?token=${validationToken}`
     };
 
-    const subject = `Many thanks for the support to our community ${userTemplate.name}`;
+    const subject = `Welcome to Grupo Vertice, ${userTemplate.name}`;
     const html = replaceTemplateEmail(emailSignupTemplate, userTemplate);
 
     await sendMail(user.email, subject, html);
@@ -82,7 +84,6 @@ const register = async (req, res) => {
     res.status(500).json({ message: 'Error registering user' });
   }
 };
-
 
 const login = async (req, res) => {
   const { email, password } = req.body;
@@ -116,7 +117,6 @@ const login = async (req, res) => {
     res.status(500).json({ message: 'Error in server' });
   }
 };
-
 
 const generateToken = (payload, isRefreshToken = false) => {
   return jwt.sign(payload, process.env.JWT_SECRET, {
