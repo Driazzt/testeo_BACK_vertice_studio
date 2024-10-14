@@ -1,14 +1,15 @@
 const express = require("express");
 const router = express.Router();
+const verifyToken = require("../Middlewares/auth")
 
 //!Enrutados
 
 const {
   getAllCourses,
   createCourses,
-  // getCoursesById,
-  // updateCoursesById,
-  // deleteCoursesById,
+  getCoursesById,
+  updateCoursesById,
+  deleteCoursesById,
 } = require ("../Controllers/coursesController");
 
 //! Rutas
@@ -26,7 +27,6 @@ router.get("/getAllCourses", getAllCourses);
  *      404:
  *        description: Error.
  */
-
 
 router.post("/createCourses", createCourses);
 /**
@@ -78,10 +78,32 @@ router.post("/createCourses", createCourses);
  *        description: Error al crear un nuevo curso
  */
 
+router.get("/getCoursesById/:_id", verifyToken, getCoursesById);
+/**
+ * @swagger
+ * /courses/getCoursesById/{_id}:
+ *  get:
+ *    summary: Obtener los cursos por ID
+ *    parameters:
+ *      - in: path
+ *        name: _id
+ *        require: true
+ *        description: ID del curso
+ *        schema:
+ *          type: string
+ *      - in: header
+ *        name: auth-token
+ *        require: true
+ *        schema:
+ *          type: string
+ *    responses:
+ *      201:
+ *        description: Success
+ *      404:
+ *        description: Error al obtener los cursos por ID
+ */
 
-
-// router.get("/:idCourses", getCoursesById);
-// router.patch("/:idCourses", updateCoursesById);
-// router.delete("/:idCourses", deleteCoursesById);
+router.patch("/updateCourse/:_id", verifyToken, updateCoursesById);
+router.delete("/deleteCourse/:_id", verifyToken, deleteCoursesById);
 
 module.exports = router;
