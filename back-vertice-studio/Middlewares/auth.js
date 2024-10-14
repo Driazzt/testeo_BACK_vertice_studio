@@ -1,26 +1,20 @@
 const jwt = require("jsonwebtoken");
 
-const verifytoken = (req, res, next) => {
-  const token = req.header("auth-token");
-  console.log("token", token);
-  if (!token)
-    return res
-      .status(400)
-      .send("Access Denied, you need to verify the Token first.");
+const verifyToken = (req, res, next) => {
+  const token = req.headers['auth-token'];
+
+  if (!token) {
+    return res.status(403).json({ message: 'Access denied. No token provided.' });
+  }
 
   try {
-    const payload = jwt.verify(token, process.env.PASSWORD_SECRET);
-    req.payload = payload;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.payload = decoded; // El token decodificado se guarda en req.payload para ser usado en las rutas protegidas.
     next();
   } catch (error) {
-    try {
-      const payload = jwt.verify(token, process.env.PASSWORD_SECRET_REFRESH);
-      req.payload = payload;
-      next();
-    } catch (error) {
-      res.status(400).send("The token has expired, you need to refresh it.");
-    }
+    console.error('Token verification error:', error);
+    return res.status(401).json({ message: 'Invalid or expired token' });
   }
 };
 
-module.exports = verifytoken;
+module.exports = verifyToken;
