@@ -9,7 +9,7 @@ const verifyToken = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.payload = decoded; // El token decodificado se guarda en req.payload para ser usado en las rutas protegidas.
+    req.payload = decoded;
     next();
   } catch (error) {
     console.error('Token verification error:', error);

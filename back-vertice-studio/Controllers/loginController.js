@@ -120,34 +120,30 @@ const login = async (req, res) => {
 
 const generateToken = (payload, isRefreshToken = false) => {
   return jwt.sign(payload, process.env.JWT_SECRET, {
-    expiresIn: isRefreshToken ? '7d' : '1h', // El token de refresh dura 7 días y el token de acceso dura 1 hora
+    expiresIn: isRefreshToken ? '7d' : '1h',
   });
 };
 
 const getRefreshToken = async (req, res) => {
   try {
-    // Verificar que el token fue previamente decodificado en req.payload por verifyToken
     if (!req.payload) {
       return res.status(400).json({ status: "Failed", message: "Access Denied" });
     }
 
-    // Obtener el ID del usuario desde el token decodificado
     const userId = req.payload.userId;
 
-    // Consultar al usuario en la base de datos
     const query = 'SELECT * FROM users WHERE id = $1';
     const values = [userId];
 
     const { rows } = await pool.query(query, values);
 
-    // Verificar si el usuario existe
     if (rows.length === 0) {
       return res.status(404).json({ status: "Failed", message: "User not found" });
     }
 
     const user = rows[0];
 
-    // Crear el payload para los nuevos tokens
+    // Creamos Payload para los nuevos tokens
     const payload = {
       userId: user.id,
       firstName: user.first_name,
@@ -161,7 +157,6 @@ const getRefreshToken = async (req, res) => {
     const token = generateToken(payload, false); // Token de acceso (1 hora)
     const refreshToken = generateToken(payload, true); // Token de refresh (7 días)
 
-    // Devolver los nuevos tokens al cliente
     res.status(201).json({ status: "Success", token, refreshToken });
   } catch (error) {
     console.error('Error in getRefreshToken:', error);
