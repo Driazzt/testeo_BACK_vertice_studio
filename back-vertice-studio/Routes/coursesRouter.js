@@ -6,9 +6,9 @@ const router = express.Router();
 const {
   getAllCourses,
   createCourses,
-  // getCoursesById,
-  // updateCoursesById,
-  // deleteCoursesById,
+  getCoursesById,
+  updateCoursesById,
+  deleteCoursesById,
 } = require ("../Controllers/coursesController");
 
 //! Rutas
@@ -80,8 +80,8 @@ router.post("/createCourses", createCourses);
 
 
 
-// router.get("/:idCourses", getCoursesById);
-// router.patch("/:idCourses", updateCoursesById);
-// router.delete("/:idCourses", deleteCoursesById);
+router.get("/getCoursesById/:idCourses", verifyToken, getCoursesById);
+router.patch("/updateCourse/:idCourses", verifyToken, updateCoursesById);
+router.delete("/deleteCourse/:idCourses", verifyToken, deleteCoursesById);
 
 module.exports = router;
