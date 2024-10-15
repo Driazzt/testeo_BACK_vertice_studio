@@ -3,6 +3,8 @@ const router = express.Router();
 const verifyToken = require("../Middlewares/auth");
 const verifyEditor = require("../Middlewares/verifyEditor");
 const verifyAdmin = require("../Middlewares/verifyAdmin");
+const verifyAuthor = require("../Middlewares/verifyAuthor");
+const verifyDesigner = require("../Middlewares/verifyDesigner");
 
 //!Enrutados
 
@@ -17,7 +19,7 @@ const {
 //! Rutas
 // http://localhost:8000/api-doc -> para ver los swaggers.
 
-router.get("/getAllCourses", verifyToken, getAllCourses);
+router.get("/getAllCourses", verifyToken, verifyAdmin, verifyAuthor, verifyDesigner, verifyEditor, getAllCourses);
 /**
  * @swagger
  * /courses/getAllCourses:
@@ -30,7 +32,7 @@ router.get("/getAllCourses", verifyToken, getAllCourses);
  *        description: Error.
  */
 
-router.post("/createCourses", createCourses);
+router.post("/createCourses", verifyToken, verifyAdmin, verifyAuthor, verifyDesigner, verifyEditor, createCourses);
 /**
  * @swagger
  * /courses/createCourses:
@@ -80,7 +82,7 @@ router.post("/createCourses", createCourses);
  *        description: Error al crear un nuevo curso
  */
 
-router.get("/getCoursesById/:_id", verifyToken, getCoursesById);
+router.get("/getCoursesById/:_id", verifyToken, verifyAdmin, verifyAuthor, verifyDesigner, verifyEditor, getCoursesById);
 /**
  * @swagger
  * /courses/getCoursesById/{_id}:
@@ -105,7 +107,7 @@ router.get("/getCoursesById/:_id", verifyToken, getCoursesById);
  *        description: Error al obtener los cursos por ID
  */
 
-router.patch("/updateCourse/:_id", verifyToken, updateCoursesById);
-router.delete("/deleteCourse/:_id", verifyToken, deleteCoursesById);
+router.patch("/updateCourse/:_id", verifyToken, verifyAdmin, verifyAuthor, verifyDesigner, verifyEditor, updateCoursesById);
+router.delete("/deleteCourse/:_id", verifyToken, verifyAdmin, verifyEditor, deleteCoursesById);
 
 module.exports = router;
