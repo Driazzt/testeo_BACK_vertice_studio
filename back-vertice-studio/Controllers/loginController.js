@@ -98,6 +98,7 @@ const login = async (req, res) => {
 
     console.log("Password from request:", password);
     console.log("Hashed password from DB:", user.password);
+    console.log("User Role:", user.user_role)
     
     const isMatch = await bcrypt.compare(password, user.password);
     console.log("Do the passwords match?", isMatch);
@@ -106,7 +107,7 @@ const login = async (req, res) => {
       return res.status(400).json({ message: 'Incorrect Password' });
     }
     
-    const token = jwt.sign({ userId: user.id, email: user.email }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ userId: user.id, email: user.email, userRole: user.user_role }, process.env.JWT_SECRET, {
       expiresIn: '1h',
     });
     console.log("Token:", token)
@@ -118,7 +119,11 @@ const login = async (req, res) => {
   }
 };
 
-const generateToken = (payload, isRefreshToken = false) => {
+const generateToken = (user, isRefreshToken = false) => {
+  const payload = {
+    id: user.id,
+    role: user.role,
+  };
   return jwt.sign(payload, process.env.JWT_SECRET, {
     expiresIn: isRefreshToken ? '7d' : '1h',
   });

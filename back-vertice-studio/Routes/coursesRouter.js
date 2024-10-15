@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const verifyToken = require("../Middlewares/auth")
+const verifyToken = require("../Middlewares/auth");
+const verifyEditor = require("../Middlewares/verifyEditor");
+const verifyAdmin = require("../Middlewares/verifyAdmin");
 
 //!Enrutados
 
@@ -15,7 +17,7 @@ const {
 //! Rutas
 // http://localhost:8000/api-doc -> para ver los swaggers.
 
-router.get("/getAllCourses", getAllCourses);
+router.get("/getAllCourses", verifyToken, getAllCourses);
 /**
  * @swagger
  * /courses/getAllCourses:
