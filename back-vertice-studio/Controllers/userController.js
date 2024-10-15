@@ -129,4 +129,19 @@ const deleteUser = async (req, res) => {
     }
 };
 
-module.exports = { createUser, getAllUsers, getUserById, updateUser, deleteUser };
+const getMyProfile = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const userResult = await pool.query('SELECT * FROM users WHERE id = $1', [id]);
+        if (userResult.rows.length === 0) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.json(userResult.rows[0]);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error fetching user profile' });
+    }
+};
+
+module.exports = { createUser, getAllUsers, getUserById, updateUser, deleteUser, getMyProfile };
