@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const swaggerConfig = require("./swaggerConfig");
 const swaggerUI = require("swagger-ui-express");
 const loginRouter = require("./Routes/loginRouter");
+const userRouter = require("./Routes/userRouter");
 const coursesRouter = require("./Routes/coursesRouter");
 require("dotenv").config();
 const PORT1 = process.env.POSTGRES_PORT || 5432;
@@ -67,6 +68,7 @@ db.on("disconnected", () => {
 // Rutas:
 
 appPostgres.use("/login", loginRouter);
+appPostgres.use("/user", userRouter);
 appMongo.use("/courses", coursesRouter);
 appMongo.use("/api-doc", swaggerUI.serve, swaggerUI.setup(swaggerConfig));
 
