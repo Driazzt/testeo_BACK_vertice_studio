@@ -96,22 +96,41 @@ const login = async (req, res) => {
       return res.status(400).json({ message: 'User not found' });
     }
 
-    console.log("Password from request:", password);
-    console.log("Hashed password from DB:", user.password);
-    console.log("User Role:", user.user_role)
-    
+    if (user.lock_until && new Date() < new Date(user.lock_until)) {
+
+      const remainingTime = Math.ceil((new Date(user.lock_until) - new Date()) / 1000 / 60);
+      
+      return res.status(403).json({ message: `Account locked. Try again in ${remainingTime} minutes` });
+    }
+
     const isMatch = await bcrypt.compare(password, user.password);
-    console.log("Do the passwords match?", isMatch);
-    
+
     if (!isMatch) {
+      const failedAttempts = user.failed_attempts + 1;
+
+      if (failedAttempts >= 10) {
+        const lockUntil = new Date(Date.now() + 5 * 60 * 1000);
+        await pool.query(
+          'UPDATE users SET failed_attempts = $1, lock_until = $2 WHERE id = $3',
+          [failedAttempts, lockUntil, user.id]
+        );
+        return res.status(403).json({ message: 'Account locked for 5 minutes due to too many failed login attempts' });
+      }
+
+      await pool.query(
+        'UPDATE users SET failed_attempts = $1 WHERE id = $2',
+        [failedAttempts, user.id]
+      );
+
       return res.status(400).json({ message: 'Incorrect Password' });
     }
-    
+
+    await pool.query('UPDATE users SET failed_attempts = 0, lock_until = NULL WHERE id = $1', [user.id]);
+
     const token = jwt.sign({ userId: user.id, email: user.email, userRole: user.user_role }, process.env.JWT_SECRET, {
       expiresIn: '1h',
     });
-    console.log("Token:", token)
-    
+
     res.json({ token, user: { id: user.id, email: user.email, role: user.user_role } });
   } catch (error) {
     console.error(error);
