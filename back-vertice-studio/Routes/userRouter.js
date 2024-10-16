@@ -1,4 +1,5 @@
 const express = require("express");
+const passwordValidator = require("../Middlewares/passwordValidator");
 const verifyToken = require("../Middlewares/auth");
 const verifyAdmin = require("../Middlewares/verifyAdmin");
 const verifyEditor = require("../Middlewares/verifyEditor");
@@ -8,7 +9,7 @@ const { createUser, getAllUsers, getUserById, updateUser, deleteUser, getMyProfi
 
 const router = express.Router();
 
-router.post("/createUser", verifyToken, verifyAdmin, createUser);
+router.post("/createUser", verifyToken, passwordValidator, verifyAdmin, createUser);
 router.get("/getAllUsers", verifyToken, verifyAdmin, getAllUsers);
 router.get("/getUserById/:id", verifyToken, verifyAdmin, getUserById);
 router.patch("/updateUser/:id", verifyToken, verifyAdmin, updateUser);

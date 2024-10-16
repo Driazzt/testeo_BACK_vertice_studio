@@ -5,7 +5,7 @@ const verifyEditor = require("../Middlewares/verifyEditor");
 const verifyAdmin = require("../Middlewares/verifyAdmin");
 const verifyAuthor = require("../Middlewares/verifyAuthor");
 const verifyDesigner = require("../Middlewares/verifyDesigner");
-
+const verifyRoles = require("../Middlewares/verifyRoles");
 //!Enrutados
 
 const {
@@ -19,7 +19,7 @@ const {
 //! Rutas
 // http://localhost:8000/api-doc -> para ver los swaggers.
 
-router.get("/getAllCourses", verifyToken, verifyAdmin, verifyAuthor, verifyDesigner, verifyEditor, getAllCourses);
+router.get("/getAllCourses", verifyToken, verifyRoles('administrator', 'author', 'designer', 'editor'), getAllCourses);
 /**
  * @swagger
  * /courses/getAllCourses:
@@ -32,8 +32,7 @@ router.get("/getAllCourses", verifyToken, verifyAdmin, verifyAuthor, verifyDesig
  *        description: Error.
  */
 
-router.post("/createCourses", verifyToken, verifyAdmin, verifyAuthor, verifyDesigner, verifyEditor, createCourses);
-/**
+router.post("/createCourses", verifyToken, verifyRoles('administrator', 'author', 'designer', 'editor'), createCourses);/**
  * @swagger
  * /courses/createCourses:
  *  post:
@@ -82,8 +81,7 @@ router.post("/createCourses", verifyToken, verifyAdmin, verifyAuthor, verifyDesi
  *        description: Error al crear un nuevo curso
  */
 
-router.get("/getCoursesById/:_id", verifyToken, verifyAdmin, verifyAuthor, verifyDesigner, verifyEditor, getCoursesById);
-/**
+router.get("/getCoursesById/:_id", verifyToken, verifyRoles('administrator', 'author', 'designer', 'editor'), getCoursesById);/**
  * @swagger
  * /courses/getCoursesById/{_id}:
  *  get:
@@ -107,7 +105,8 @@ router.get("/getCoursesById/:_id", verifyToken, verifyAdmin, verifyAuthor, verif
  *        description: Error al obtener los cursos por ID
  */
 
-router.patch("/updateCourse/:_id", verifyToken, verifyAdmin, verifyAuthor, verifyDesigner, verifyEditor, updateCoursesById);
-router.delete("/deleteCourse/:_id", verifyToken, verifyAdmin, verifyEditor, deleteCoursesById);
+router.patch("/updateCourse/:_id", verifyToken, verifyRoles('administrator', 'author', 'designer', 'editor'), updateCoursesById);
+
+router.delete("/deleteCourse/:_id", verifyToken, verifyRoles('administrator', 'editor'), deleteCoursesById);
 
 module.exports = router;
