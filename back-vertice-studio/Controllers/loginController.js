@@ -206,4 +206,25 @@ const forgotPassword = async (req, res) => {
   }
 };
 
-module.exports = { login, register, getRefreshToken, forgotPassword };
+const resetPassword = async (req, res) => {
+  const { token, newPassword, confirmPassword } = req.body;
+
+  try {
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({ message: 'Passwords do not match' });
+    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.userId;
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await pool.query('UPDATE users SET password = $1 WHERE id = $2', [hashedPassword, userId]);
+
+    res.status(200).json({ message: 'Password has been reset successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error resetting password' });
+  }
+};
+
+module.exports = { login, register, getRefreshToken, forgotPassword, resetPassword };
