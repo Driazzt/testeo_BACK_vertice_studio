@@ -5,6 +5,8 @@ const { Pool } = require('pg');
 const replaceTemplateEmail = require('../Templates/replaceTemplateEmail');
 const { emailSignupTemplate } = require('../Templates/template');
 const { sendMail } = require('../Services/services');
+const { emailForgotPasswordTemplate } = require("../Templates/emailForgotPasswordTemplate");
+
 
 const pool = new Pool({
   connectionString: process.env.POSTGRES_URL,
@@ -169,4 +171,39 @@ const getRefreshToken = async (req, res) => {
   }
 };
 
-module.exports = { login, register, getRefreshToken };
+const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const userResult = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+    const user = userResult.rows[0];
+
+    if (!user) {
+      return res.status(400).json({ message: 'User not found' });
+    }
+
+    const resetToken = jwt.sign({ userId: user.id, email: user.email }, process.env.JWT_SECRET, {
+      expiresIn: '1h',
+    });
+
+    const resetLink = `https://yourdomain.com/reset-password?token=${resetToken}`;
+
+    const userTemplate = {
+      name: user.first_name,
+      email: user.email,
+      reset_link: resetLink,
+    };
+
+    const subject = 'Password Reset Request';
+    const html = replaceTemplateEmail(emailForgotPasswordTemplate, userTemplate);
+
+    await sendMail(user.email, subject, html);
+
+    res.status(200).json({ message: 'Password reset link sent to your email' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error processing request' });
+  }
+};
+
+module.exports = { login, register, getRefreshToken, forgotPassword };
