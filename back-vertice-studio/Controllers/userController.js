@@ -130,10 +130,10 @@ const deleteUser = async (req, res) => {
 };
 
 const getMyProfile = async (req, res) => {
-    const { id } = req.params;
+    const userId = req.payload.userId;
 
     try {
-        const userResult = await pool.query('SELECT * FROM users WHERE id = $1', [id]);
+        const userResult = await pool.query('SELECT * FROM users WHERE id = $1', [userId]);
         if (userResult.rows.length === 0) {
             return res.status(404).json({ message: 'User not found' });
         }
