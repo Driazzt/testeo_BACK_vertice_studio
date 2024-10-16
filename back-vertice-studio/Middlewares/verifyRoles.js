@@ -13,7 +13,7 @@ const verifyRoles = (...roles) => {
 
       // Verifica si el rol del usuario está entre los roles permitidos
       if (!roles.includes(userRole)) {
-        return res.status(403).json({ message: 'Access denied' });
+        return res.status(403).json({   message: `Access denied. You need one of the following roles: ${roles.join(', ')}`, });
       }
 
       req.payload = decoded; // Almacena la información del usuario en la request
