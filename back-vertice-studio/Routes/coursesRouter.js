@@ -14,6 +14,7 @@ const {
   getCoursesById,
   updateCoursesById,
   deleteCoursesById,
+  markCourseAsFavorite,
 } = require ("../Controllers/coursesController");
 
 //! Rutas
@@ -80,6 +81,8 @@ router.post("/createCourses", verifyToken, verifyRoles('administrator', 'author'
  *      404:
  *        description: Error al crear un nuevo curso
  */
+
+router.post('/favoriteCourse', verifyToken, markCourseAsFavorite);
 
 router.get("/getCoursesById/:_id", verifyToken, verifyRoles('administrator', 'author', 'designer', 'editor'), getCoursesById);/**
  * @swagger

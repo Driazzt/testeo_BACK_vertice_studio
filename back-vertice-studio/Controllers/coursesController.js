@@ -1,3 +1,7 @@
+const { Pool } = require('pg');
+const pool = new Pool({
+  connectionString: process.env.POSTGRES_URL,
+});
 const coursesModel = require("../Models/coursesModel");
 
 // Endpoints de los cursos:
@@ -109,10 +113,31 @@ const deleteCoursesById = async (req, res) => {
   }
 };
 
+const markCourseAsFavorite = async (req, res) => {
+  const { userId, courseId } = req.body;
+
+  try {
+    const result = await pool.query(
+      'UPDATE users SET favorite_courses = array_append(favorite_courses, $1::text) WHERE id = $2 RETURNING *',
+      [courseId, userId]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({ message: "Course marked as favorite", user: result.rows[0] });
+  } catch (error) {
+    console.error('Error al marcar el curso como favorito:', error);
+    res.status(500).json({ message: "Internal server error", error });
+  }
+};
+
 module.exports = {
   getAllCourses,
   createCourses,
   getCoursesById,
   updateCoursesById,
   deleteCoursesById,
+  markCourseAsFavorite,
 };
