@@ -54,13 +54,12 @@ const register = async (req, res) => {
     console.log("Last name:", lastName);
 
     const newUser = await pool.query(
-      'INSERT INTO users (email, password, username, first_name, last_name) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-      [email, hashedPassword, username, firstName, lastName]
+      'INSERT INTO users (email, password, username, first_name, last_name, is_verified) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+      [email, hashedPassword, username, firstName, lastName, true] //este true deberia ser false, pero como no tenemos domino propio, no podemos verificar el correo, por lo que lo dejamos en true
     );
 
     const user = newUser.rows[0];
 
-    // Generar un token de validación
     const validationToken = jwt.sign({ userId: user.id, email: user.email }, process.env.JWT_SECRET, {
       expiresIn: '1d',
     });
@@ -98,26 +97,69 @@ const login = async (req, res) => {
       return res.status(400).json({ message: 'User not found' });
     }
 
-    console.log("Password from request:", password);
-    console.log("Hashed password from DB:", user.password);
-    console.log("User Role:", user.user_role)
-    
+    if (!user.is_verified) {
+      return res.status(400).json({ message: 'Please verify your email before logging in.' });
+    }
+
+    if (user.lock_until && new Date() < new Date(user.lock_until)) {
+      const remainingTime = Math.ceil((new Date(user.lock_until) - new Date()) / 1000 / 60);
+      return res.status(403).json({ message: `Account locked. Try again in ${remainingTime} minutes` });
+    }
+
+    if (user.lock_until && new Date() >= new Date(user.lock_until)) {
+      await pool.query('UPDATE users SET login_attempts = 10, lock_until = NULL WHERE id = $1', [user.id]);
+      user.login_attempts = 10;
+      user.lock_until = null;
+    }
+
     const isMatch = await bcrypt.compare(password, user.password);
-    console.log("Do the passwords match?", isMatch);
-    
+
     if (!isMatch) {
+      user.login_attempts -= 1;
+      await pool.query('UPDATE users SET login_attempts = $1 WHERE id = $2', [user.login_attempts, user.id]);
+
+      if (user.login_attempts <= 0) {
+        const lockUntil = new Date(Date.now() + 5 * 60 * 1000); 
+        await pool.query('UPDATE users SET lock_until = $1 WHERE id = $2', [lockUntil, user.id]);
+        return res.status(403).json({ message: 'Account locked due to too many failed login attempts. Try again in 5 minutes.' });
+      }
+
       return res.status(400).json({ message: 'Incorrect Password' });
     }
-    
+
+    await pool.query('UPDATE users SET failed_attempts = 0, lock_until = NULL WHERE id = $1', [user.id]);
+
     const token = jwt.sign({ userId: user.id, email: user.email, userRole: user.user_role }, process.env.JWT_SECRET, {
       expiresIn: '1h',
     });
-    console.log("Token:", token)
-    
+
     res.json({ token, user: { id: user.id, email: user.email, role: user.user_role } });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error in server' });
+  }
+};
+
+const verifyUser = async (req, res) => {
+  const { token } = req.query;
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.userId;
+
+    const userResult = await pool.query('SELECT * FROM users WHERE id = $1', [userId]);
+    const user = userResult.rows[0];
+
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid token or user not found' });
+    }
+
+    await pool.query('UPDATE users SET is_verified = true WHERE id = $1', [userId]);
+
+    res.status(200).json({ message: 'User verified successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error verifying user' });
   }
 };
 
@@ -158,6 +200,7 @@ const getRefreshToken = async (req, res) => {
       username: user.username,
       email: user.email,
       role: user.role,
+      is_verified: user.is_verified,
     };
 
     // Generar un nuevo token de acceso y un token de refresh
@@ -227,4 +270,4 @@ const resetPassword = async (req, res) => {
   }
 };
 
-module.exports = { login, register, getRefreshToken, forgotPassword, resetPassword };
+module.exports = { login, register, getRefreshToken, verifyUser, forgotPassword, resetPassword };
