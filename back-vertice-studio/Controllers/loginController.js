@@ -7,7 +7,6 @@ const { emailSignupTemplate } = require('../Templates/template');
 const { sendMail } = require('../Services/services');
 const { emailForgotPasswordTemplate } = require("../Templates/emailForgotPasswordTemplate");
 
-
 const pool = new Pool({
   connectionString: process.env.POSTGRES_URL,
   connectionTimeoutMillis: 5000,
@@ -54,8 +53,8 @@ const register = async (req, res) => {
     console.log("Last name:", lastName);
 
     const newUser = await pool.query(
-      'INSERT INTO users (email, password, username, first_name, last_name, is_verified) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-      [email, hashedPassword, username, firstName, lastName, true] //este true deberia ser false, pero como no tenemos domino propio, no podemos verificar el correo, por lo que lo dejamos en true
+      'INSERT INTO users (email, password, username, first_name, last_name, is_verified, login_attempts) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
+      [email, hashedPassword, username, firstName, lastName, true, 10] // Inicializa login_attempts a 10
     );
 
     const user = newUser.rows[0];
@@ -127,7 +126,7 @@ const login = async (req, res) => {
       return res.status(400).json({ message: 'Incorrect Password' });
     }
 
-    await pool.query('UPDATE users SET login_attempts = 0, lock_until = NULL WHERE id = $1', [user.id]);
+    await pool.query('UPDATE users SET login_attempts = 10, lock_until = NULL WHERE id = $1', [user.id]);
 
     const token = jwt.sign({ userId: user.id, email: user.email, userRole: user.user_role }, process.env.JWT_SECRET, {
       expiresIn: '1h',
