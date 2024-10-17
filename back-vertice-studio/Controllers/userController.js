@@ -144,4 +144,17 @@ const getMyProfile = async (req, res) => {
     }
 };
 
-module.exports = { createUser, getAllUsers, getUserById, updateUser, deleteUser, getMyProfile };
+const updateLastVisitedCourse = async (req, res) => {
+    const { userId, courseId } = req.body;
+  
+    try {
+      await pool.query('UPDATE users SET last_visited_course = $1 WHERE id = $2', [courseId, userId]);
+      res.status(200).json({ message: 'Last visited course updated successfully' });
+    } catch (error) {
+      console.error('Error updating last visited course:', error);
+      res.status(500).json({ message: 'Error updating last visited course' });
+    }
+  };
+
+  
+module.exports = { createUser, getAllUsers, getUserById, updateUser, deleteUser, getMyProfile, updateLastVisitedCourse };
