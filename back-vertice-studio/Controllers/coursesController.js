@@ -4,8 +4,22 @@ const coursesModel = require("../Models/coursesModel");
 
 const getAllCourses = async (req, res) => {
   try {
-    const courses = await coursesModel.find();
-    res.status(200).json({ courses: courses });
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 12;
+
+    const skip = (page - 1) * limit;
+
+    const courses = await coursesModel.find().skip(skip).limit(limit);
+    const totalCourses = await coursesModel.countDocuments();
+
+    const totalPages = Math.ceil(totalCourses / limit);
+
+    res.status(200).json({
+      courses: courses,
+      totalCourses: totalCourses,
+      totalPages: totalPages,
+      currentPage: page,
+    });
   } catch (error) {
     res.status(500).json({ status: "Failed", error: error.message });
   }
