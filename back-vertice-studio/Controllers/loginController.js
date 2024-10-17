@@ -127,7 +127,7 @@ const login = async (req, res) => {
       return res.status(400).json({ message: 'Incorrect Password' });
     }
 
-    await pool.query('UPDATE users SET failed_attempts = 0, lock_until = NULL WHERE id = $1', [user.id]);
+    await pool.query('UPDATE users SET login_attempts = 0, lock_until = NULL WHERE id = $1', [user.id]);
 
     const token = jwt.sign({ userId: user.id, email: user.email, userRole: user.user_role }, process.env.JWT_SECRET, {
       expiresIn: '1h',
