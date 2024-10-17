@@ -58,7 +58,6 @@ const register = async (req, res) => {
 
     const user = newUser.rows[0];
 
-    // Generar un token de validación
     const validationToken = jwt.sign({ userId: user.id, email: user.email }, process.env.JWT_SECRET, {
       expiresIn: '1d',
     });
