@@ -5,6 +5,8 @@ const { Pool } = require('pg');
 const replaceTemplateEmail = require('../Templates/replaceTemplateEmail');
 const { emailSignupTemplate } = require('../Templates/template');
 const { sendMail } = require('../Services/services');
+const { emailForgotPasswordTemplate } = require("../Templates/emailForgotPasswordTemplate");
+
 
 const pool = new Pool({
   connectionString: process.env.POSTGRES_URL,
@@ -212,4 +214,60 @@ const getRefreshToken = async (req, res) => {
   }
 };
 
-module.exports = { login, register, verifyUser, getRefreshToken };
+const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const userResult = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+    const user = userResult.rows[0];
+
+    if (!user) {
+      return res.status(400).json({ message: 'User not found' });
+    }
+
+    const resetToken = jwt.sign({ userId: user.id, email: user.email }, process.env.JWT_SECRET, {
+      expiresIn: '1h',
+    });
+
+    const resetLink = `https://yourdomain.com/reset-password?token=${resetToken}`;
+
+    const userTemplate = {
+      name: user.first_name,
+      email: user.email,
+      reset_link: resetLink,
+    };
+
+    const subject = 'Password Reset Request';
+    const html = replaceTemplateEmail(emailForgotPasswordTemplate, userTemplate);
+
+    await sendMail(user.email, subject, html);
+
+    res.status(200).json({ message: 'Password reset link sent to your email' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error processing request' });
+  }
+};
+
+const resetPassword = async (req, res) => {
+  const { token, newPassword, confirmPassword } = req.body;
+
+  try {
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({ message: 'Passwords do not match' });
+    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.userId;
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await pool.query('UPDATE users SET password = $1 WHERE id = $2', [hashedPassword, userId]);
+
+    res.status(200).json({ message: 'Password has been reset successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error resetting password' });
+  }
+};
+
+module.exports = { login, register, getRefreshToken, verifyUser, forgotPassword, resetPassword };
