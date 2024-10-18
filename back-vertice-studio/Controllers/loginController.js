@@ -103,7 +103,7 @@ const login = async (req, res) => {
 
     if (user.lock_until && new Date() < new Date(user.lock_until)) {
       const remainingTime = Math.ceil((new Date(user.lock_until) - new Date()) / 1000 / 60);
-      return res.status(403).json({ message: `Account locked. Try again in ${remainingTime} minutes` });
+      return res.status(424).json({ message: `Account locked. Try again in ${remainingTime} minutes` });
     }
 
     if (user.lock_until && new Date() >= new Date(user.lock_until)) {
@@ -121,7 +121,7 @@ const login = async (req, res) => {
       if (user.login_attempts <= 0) {
         const lockUntil = new Date(Date.now() + 5 * 60 * 1000); 
         await pool.query('UPDATE users SET lock_until = $1 WHERE id = $2', [lockUntil, user.id]);
-        return res.status(403).json({ message: 'Account locked due to too many failed login attempts. Try again in 5 minutes.' });
+        return res.status(423).json({ message: 'Account locked due to too many failed login attempts. Try again in 5 minutes.' });
       }
 
       return res.status(400).json({ message: 'Incorrect Password' });
