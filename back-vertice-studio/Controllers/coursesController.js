@@ -115,9 +115,15 @@ const markCourseAsFavorite = async (req, res) => {
   const { userId, courseId } = req.body;
 
   try {
+    const course = await coursesModel.findById(courseId);
+    if (!course) {
+      return res.status(404).json({ message: "Course not found" });
+    }
+    const courseName = course.title;
+
     const result = await pool.query(
       'UPDATE users SET favorite_courses = array_append(favorite_courses, $1::text) WHERE id = $2 RETURNING *',
-      [courseId, userId]
+      [courseName, userId]
     );
 
     if (result.rowCount === 0) {
@@ -131,6 +137,32 @@ const markCourseAsFavorite = async (req, res) => {
   }
 };
 
+const removeCourseFromFavorites = async (req, res) => {
+  const { userId, courseId } = req.body;
+
+  try {
+    const course = await coursesModel.findById(courseId);
+    if (!course) {
+      return res.status(404).json({ message: "Course not found" });
+    }
+    const courseName = course.title;
+
+    const result = await pool.query(
+      'UPDATE users SET favorite_courses = array_remove(favorite_courses, $1::text) WHERE id = $2 RETURNING *',
+      [courseName, userId]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({ message: "Course removed from favorites", user: result.rows[0] });
+  } catch (error) {
+    console.error('Error al eliminar el curso de favoritos:', error);
+    res.status(500).json({ message: "Internal server error", error });
+  }
+};
+
 module.exports = {
   getAllCourses,
   createCourses,
@@ -138,4 +170,5 @@ module.exports = {
   updateCoursesById,
   deleteCoursesById,
   markCourseAsFavorite,
+  removeCourseFromFavorites,
 };

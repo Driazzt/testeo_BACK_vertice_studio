@@ -11,6 +11,7 @@ const {
   updateCoursesById,
   deleteCoursesById,
   markCourseAsFavorite,
+  removeCourseFromFavorites,
 } = require ("../Controllers/coursesController");
 
 //! Rutas
@@ -80,6 +81,8 @@ router.post("/createCourses", verifyToken, verifyRoles('administrator', 'author'
  */
 
 router.post('/favoriteCourse', verifyToken, markCourseAsFavorite);
+
+router.post('/removeFavoriteCourse', verifyToken, removeCourseFromFavorites);
 
 router.get("/getCoursesById/:_id", verifyToken, verifyRoles('administrator', 'author', 'designer', 'editor'), getCoursesById);
 /**

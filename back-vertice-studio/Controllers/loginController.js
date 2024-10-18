@@ -165,8 +165,13 @@ const verifyUser = async (req, res) => {
 
 const generateToken = (user, isRefreshToken = false) => {
   const payload = {
-    id: user.id,
-    role: user.role,
+    userId: user.id,
+    firstName: user.first_name,
+    lastName: user.last_name,
+    username: user.username,
+    email: user.email,
+    role: user.user_role,
+    is_verified: user.is_verified,
   };
   return jwt.sign(payload, process.env.JWT_SECRET, {
     expiresIn: isRefreshToken ? '7d' : '1h',
@@ -199,9 +204,10 @@ const getRefreshToken = async (req, res) => {
       lastName: user.last_name,
       username: user.username,
       email: user.email,
-      role: user.role,
+      role: user.user_role,
       is_verified: user.is_verified,
     };
+    console.log('Payload:', payload);
 
     const token = generateToken(payload, false);
     const refreshToken = generateToken(payload, true);
