@@ -55,7 +55,7 @@ const register = async (req, res) => {
 
     const newUser = await pool.query(
       'INSERT INTO users (email, password, username, first_name, last_name, is_verified, login_attempts) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
-      [email, hashedPassword, username, firstName, lastName, true, 10] // Inicializa login_attempts a 10
+      [email, hashedPassword, username, firstName, lastName, true, 10]
     );
 
     const user = newUser.rows[0];
@@ -203,9 +203,8 @@ const getRefreshToken = async (req, res) => {
       is_verified: user.is_verified,
     };
 
-    // Generar un nuevo token de acceso y un token de refresh
-    const token = generateToken(payload, false); // Token de acceso (1 hora)
-    const refreshToken = generateToken(payload, true); // Token de refresh (7 días)
+    const token = generateToken(payload, false);
+    const refreshToken = generateToken(payload, true);
 
     res.status(201).json({ status: "Success", token, refreshToken });
   } catch (error) {

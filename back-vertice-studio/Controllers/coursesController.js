@@ -4,8 +4,6 @@ const pool = new Pool({
 });
 const coursesModel = require("../Models/coursesModel");
 
-// Endpoints de los cursos:
-
 const getAllCourses = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;

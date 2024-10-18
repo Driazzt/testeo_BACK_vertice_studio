@@ -8,15 +8,14 @@ const verifyRoles = (...roles) => {
         return res.status(401).json({ message: 'No token, auth-token denied' });
       }
 
-      const decoded = jwt.verify(token, process.env.JWT_SECRET); // Verifica el token con tu clave secreta
-      const userRole = decoded.userRole; // Extrae el rol del usuario
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const userRole = decoded.userRole;
 
-      // Verifica si el rol del usuario está entre los roles permitidos
       if (!roles.includes(userRole)) {
         return res.status(403).json({   message: `Access denied. You need one of the following roles: ${roles.join(', ')}`, });
       }
 
-      req.payload = decoded; // Almacena la información del usuario en la request
+      req.payload = decoded;
       next();
     } catch (error) {
       console.error(error);

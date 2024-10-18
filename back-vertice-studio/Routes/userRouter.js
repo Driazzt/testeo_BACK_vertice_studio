@@ -1,22 +1,18 @@
 const express = require("express");
 const passwordValidator = require("../Middlewares/passwordValidator");
 const verifyToken = require("../Middlewares/auth");
-const verifyAdmin = require("../Middlewares/verifyAdmin");
-const verifyEditor = require("../Middlewares/verifyEditor");
-const verifyAuthor = require("../Middlewares/verifyAuthor");
-const verifyDesigner = require("../Middlewares/verifyDesigner");
 const { createUser, getAllUsers, getUserById, updateUser, deleteUser, getMyProfile, updateMyProfile, updateLastVisitedCourse } = require("../Controllers/userController");
 const verifyRoles = require("../Middlewares/verifyRoles");
 const router = express.Router();
 
 
-router.post("/createUser", verifyToken, passwordValidator, verifyAdmin, createUser);
-router.get("/getAllUsers", verifyToken, verifyAdmin, getAllUsers);
+router.post("/createUser", verifyToken, passwordValidator, verifyRoles('administrator'), createUser);
+router.get("/getAllUsers", verifyToken, verifyRoles('administrator'), getAllUsers);
 router.get("/getMyProfile", verifyToken, getMyProfile);
 router.patch("/updateMyProfile", verifyToken, updateMyProfile);
-router.get("/getUserById/:id", verifyToken, verifyAdmin, getUserById);
-router.patch("/updateUser/:id", verifyToken, verifyAdmin, updateUser);
-router.delete("/deleteUser/:id", verifyToken, verifyAdmin, deleteUser);
+router.get("/getUserById/:id", verifyToken, verifyRoles('administrator'), getUserById);
+router.patch("/updateUser/:id", verifyToken, verifyRoles('administrator'), updateUser);
+router.delete("/deleteUser/:id", verifyToken, verifyRoles('administrator'), deleteUser);
 router.patch("/updateLastVisitedCourse", verifyToken, verifyRoles('administrator', 'author', 'designer', 'editor'), updateLastVisitedCourse);
 
 module.exports = router;

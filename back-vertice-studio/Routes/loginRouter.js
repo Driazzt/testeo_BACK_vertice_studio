@@ -11,7 +11,6 @@ router.get("/verify", verifyUser);
 router.post("/forgotPassword", forgotPassword)
 router.get("/getRefreshToken", verifyToken, getRefreshToken);
 router.post("/resetPassword", resetPassword) //podemos utilizar tanto post como patch
-
 router.get("/lastVisitedCourse/:userId", verifyToken, verifyRoles('administrator', 'author', 'designer', 'editor'), getLastVisitedCourseName);
 
 module.exports = router;

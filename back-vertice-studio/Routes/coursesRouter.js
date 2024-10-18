@@ -1,10 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const verifyToken = require("../Middlewares/auth");
-const verifyEditor = require("../Middlewares/verifyEditor");
-const verifyAdmin = require("../Middlewares/verifyAdmin");
-const verifyAuthor = require("../Middlewares/verifyAuthor");
-const verifyDesigner = require("../Middlewares/verifyDesigner");
 const verifyRoles = require("../Middlewares/verifyRoles");
 //!Enrutados
 
@@ -33,7 +29,8 @@ router.get("/getAllCourses", verifyToken, verifyRoles('administrator', 'author',
  *        description: Error.
  */
 
-router.post("/createCourses", verifyToken, verifyRoles('administrator', 'author', 'designer', 'editor'), createCourses);/**
+router.post("/createCourses", verifyToken, verifyRoles('administrator', 'author', 'designer', 'editor'), createCourses);
+/**
  * @swagger
  * /courses/createCourses:
  *  post:
@@ -84,7 +81,8 @@ router.post("/createCourses", verifyToken, verifyRoles('administrator', 'author'
 
 router.post('/favoriteCourse', verifyToken, markCourseAsFavorite);
 
-router.get("/getCoursesById/:_id", verifyToken, verifyRoles('administrator', 'author', 'designer', 'editor'), getCoursesById);/**
+router.get("/getCoursesById/:_id", verifyToken, verifyRoles('administrator', 'author', 'designer', 'editor'), getCoursesById);
+/**
  * @swagger
  * /courses/getCoursesById/{_id}:
  *  get:
