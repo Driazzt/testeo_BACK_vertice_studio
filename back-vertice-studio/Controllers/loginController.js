@@ -6,6 +6,7 @@ const replaceTemplateEmail = require('../Templates/replaceTemplateEmail');
 const { emailSignupTemplate } = require('../Templates/template');
 const { sendMail } = require('../Services/services');
 const { emailForgotPasswordTemplate } = require("../Templates/emailForgotPasswordTemplate");
+const Course = require('../Models/coursesModel'); 
 
 const pool = new Pool({
   connectionString: process.env.POSTGRES_URL,
@@ -102,7 +103,7 @@ const login = async (req, res) => {
 
     if (user.lock_until && new Date() < new Date(user.lock_until)) {
       const remainingTime = Math.ceil((new Date(user.lock_until) - new Date()) / 1000 / 60);
-      return res.status(403).json({ message: `Account locked. Try again in ${remainingTime} minutes` });
+      return res.status(423).json({ message: `Account locked. Try again in ${remainingTime} minutes` });
     }
 
     if (user.lock_until && new Date() >= new Date(user.lock_until)) {
@@ -120,7 +121,7 @@ const login = async (req, res) => {
       if (user.login_attempts <= 0) {
         const lockUntil = new Date(Date.now() + 5 * 60 * 1000); 
         await pool.query('UPDATE users SET lock_until = $1 WHERE id = $2', [lockUntil, user.id]);
-        return res.status(403).json({ message: 'Account locked due to too many failed login attempts. Try again in 5 minutes.' });
+        return res.status(423).json({ message: 'Account locked due to too many failed login attempts. Try again in 5 minutes.' });
       }
 
       return res.status(400).json({ message: 'Incorrect Password' });
@@ -269,4 +270,27 @@ const resetPassword = async (req, res) => {
   }
 };
 
-module.exports = { login, register, getRefreshToken, verifyUser, forgotPassword, resetPassword };
+const getLastVisitedCourseName = async (req, res) => {
+  const userId = req.params.userId;
+
+  try {
+    const result = await pool.query('SELECT last_visited_course FROM users WHERE id = $1', [userId]);
+    const lastVisitedCourseId = result.rows[0].last_visited_course;
+
+    if (!lastVisitedCourseId) {
+      return res.status(404).json({ message: 'No course visited yet' });
+    }
+
+    const course = await Course.findById(lastVisitedCourseId);
+    if (!course) {
+      return res.status(404).json({ message: 'Course not found' });
+    }
+
+    res.status(200).json({ courseName: course.title });
+  } catch (error) {
+    console.error('Error fetching last visited course name:', error);
+    res.status(500).json({ message: 'Error fetching last visited course name' });
+  }
+};
+
+module.exports = { login, register, getRefreshToken, verifyUser, forgotPassword, resetPassword, getLastVisitedCourseName };
