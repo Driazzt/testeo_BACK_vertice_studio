@@ -143,5 +143,39 @@ const getMyProfile = async (req, res) => {
         res.status(500).json({ message: 'Error fetching user profile' });
     }
 };
+const updateMyProfile = async (req, res) => {
+    const userId = req.payload.userId;
+    const { username, firstName, lastName, password } = req.body;
 
-module.exports = { createUser, getAllUsers, getUserById, updateUser, deleteUser, getMyProfile };
+    try {
+        let hashedPassword = null;
+        if (password) {
+            hashedPassword = await bcrypt.hash(password, 10);
+        }
+
+        const query = `
+            UPDATE users 
+            SET 
+                username = COALESCE($1, username), 
+                first_name = COALESCE($2, first_name), 
+                last_name = COALESCE($3, last_name), 
+                password = COALESCE($4, password)
+            WHERE id = $5 
+            RETURNING *`;
+
+        const values = [username, firstName, lastName, hashedPassword, userId];
+
+        const userResult = await pool.query(query, values);
+
+        if (userResult.rows.length === 0) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.json(userResult.rows[0]);
+    } catch (error) {
+        console.error('Error updating user profile:', error);
+        res.status(500).json({ message: 'Error updating user profile' });
+    }
+};
+
+module.exports = { createUser, getAllUsers, getUserById, updateUser, deleteUser, getMyProfile, updateMyProfile };
