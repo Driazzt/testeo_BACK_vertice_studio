@@ -4,6 +4,7 @@ const { Pool } = require('pg');
 const replaceTemplateEmail = require('../Templates/replaceTemplateEmail');
 const { emailSignupTemplate } = require('../Templates/template');
 const { sendMail } = require('../Services/services');
+const coursesModel = require("../Models/coursesModel");
 
 require("dotenv").config();
 
@@ -182,7 +183,13 @@ const updateLastVisitedCourse = async (req, res) => {
     const { userId, courseId } = req.body;
   
     try {
-      await pool.query('UPDATE users SET last_visited_course = $1 WHERE id = $2', [courseId, userId]);
+      const course = await coursesModel.findById(courseId);
+      if (!course) {
+        return res.status(404).json({ message: "Course not found" });
+      }
+      const courseName = course.title;
+
+      await pool.query('UPDATE users SET last_visited_course = $1 WHERE id = $2', [courseName, userId]);
       res.status(200).json({ message: 'Last visited course updated successfully' });
     } catch (error) {
       console.error('Error updating last visited course:', error);

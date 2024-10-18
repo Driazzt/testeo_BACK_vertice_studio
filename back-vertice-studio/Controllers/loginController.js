@@ -275,27 +275,4 @@ const resetPassword = async (req, res) => {
   }
 };
 
-const getLastVisitedCourseName = async (req, res) => {
-  const userId = req.params.userId;
-
-  try {
-    const result = await pool.query('SELECT last_visited_course FROM users WHERE id = $1', [userId]);
-    const lastVisitedCourseId = result.rows[0].last_visited_course;
-
-    if (!lastVisitedCourseId) {
-      return res.status(404).json({ message: 'No course visited yet' });
-    }
-
-    const course = await Course.findById(lastVisitedCourseId);
-    if (!course) {
-      return res.status(404).json({ message: 'Course not found' });
-    }
-
-    res.status(200).json({ courseName: course.title });
-  } catch (error) {
-    console.error('Error fetching last visited course name:', error);
-    res.status(500).json({ message: 'Error fetching last visited course name' });
-  }
-};
-
-module.exports = { login, register, getRefreshToken, verifyUser, forgotPassword, resetPassword, getLastVisitedCourseName };
+module.exports = { login, register, getRefreshToken, verifyUser, forgotPassword, resetPassword };
