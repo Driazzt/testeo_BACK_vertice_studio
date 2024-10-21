@@ -82,6 +82,9 @@ const updateCoursesById = async (req, res) => {
       level,
       instructor,
       price,
+      image,
+      lessons,
+      screens,
     } = req.body;
     const course = await coursesModel.findByIdAndUpdate(
       req.params._id,
@@ -93,6 +96,9 @@ const updateCoursesById = async (req, res) => {
         level,
         instructor,
         price,
+        image,
+        lessons,
+        screens,
       },
       { new: true }
     );
