@@ -209,8 +209,8 @@ const getRefreshToken = async (req, res) => {
     };
     console.log('Payload:', payload);
 
-    const token = generateToken(payload, false);
-    const refreshToken = generateToken(payload, true);
+    const token = generateToken(user, false);
+    const refreshToken = generateToken(user, true);
 
     res.status(201).json({ status: "Success", token, refreshToken });
   } catch (error) {

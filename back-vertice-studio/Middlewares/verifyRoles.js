@@ -9,7 +9,7 @@ const verifyRoles = (...roles) => {
       }
 
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const userRole = decoded.userRole;
+      const userRole = decoded.userRole || decoded.role;
 
       if (!roles.includes(userRole)) {
         return res.status(403).json({   message: `Access denied. You need one of the following roles: ${roles.join(', ')}`, });
