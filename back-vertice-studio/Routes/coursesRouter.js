@@ -12,6 +12,7 @@ const {
   deleteCoursesById,
   markCourseAsFavorite,
   removeCourseFromFavorites,
+  getLessonById,
 } = require ("../Controllers/coursesController");
 
 //! Rutas
@@ -112,5 +113,7 @@ router.get("/getCoursesById/:_id", verifyToken, verifyRoles('administrator', 'au
 router.patch("/updateCourse/:_id", verifyToken, verifyRoles('administrator', 'author', 'designer', 'editor'), updateCoursesById);
 
 router.delete("/deleteCourse/:_id", verifyToken, verifyRoles('administrator', 'editor'), deleteCoursesById);
+
+router.get('/:_id/lessons/:lessonId', verifyToken, getLessonById);
 
 module.exports = router;

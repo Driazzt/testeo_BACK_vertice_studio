@@ -179,6 +179,25 @@ const removeCourseFromFavorites = async (req, res) => {
   }
 };
 
+const getLessonById = async (req, res) => {
+  try {
+    const course = await coursesModel.findById(req.params._id);
+    if (!course) {
+      return res.status(404).json({ status: "Failed", message: "Course not found" });
+    }
+
+    // Encuentra la lección específica dentro del array de lecciones
+    const lesson = course.lessons.id(req.params.lessonId);
+    if (!lesson) {
+      return res.status(404).json({ status: "Failed", message: "Lesson not found" });
+    }
+
+    res.status(200).json({ status: "Success", lesson: lesson });
+  } catch (error) {
+    res.status(500).json({ status: "Failed", error: error.message });
+  }
+};
+
 module.exports = {
   getAllCourses,
   createCourses,
@@ -187,4 +206,5 @@ module.exports = {
   deleteCoursesById,
   markCourseAsFavorite,
   removeCourseFromFavorites,
+  getLessonById,
 };

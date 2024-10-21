@@ -16,7 +16,25 @@ const screenSchema = new mongoose.Schema({
   quiz: {
     type: Object,
   }
-});
+}, { _id: true });  // Asegura que cada pantalla tenga un identificador único
+
+const lessonSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    required: true,
+  },
+  content: {
+    type: String,
+    required: true,
+  },
+  media: {
+    type: String,  // URL de una imagen, video, etc.
+  },
+  quiz: {
+    type: Object,
+  },
+  screens: [screenSchema]  // Array de pantallas dentro de una lección
+}, { _id: true });
 
 const coursesSchema = new mongoose.Schema({
   title: {
@@ -55,11 +73,10 @@ const coursesSchema = new mongoose.Schema({
     required: true,
   },
   lessons: {
-    type: Number,
+    type: [lessonSchema],  // Array de lecciones dentro de un curso
     required: true,
     min: 1,
   },
-  screens: [screenSchema],  // Array de pantallas (screens)
 },
 { timestamps: true });
 
