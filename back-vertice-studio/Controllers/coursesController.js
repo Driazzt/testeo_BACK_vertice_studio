@@ -37,6 +37,9 @@ const createCourses = async (req, res) => {
       level,
       instructor,
       price,
+      image,
+      lessons,
+      screens,
     } = req.body;
     const courses = await coursesModel.create({
       title,
@@ -46,6 +49,9 @@ const createCourses = async (req, res) => {
       level,
       instructor,
       price,
+      image,
+      lessons,
+      screens,
     });
 
     res.status(200).json({ status: "Success", courses: courses });
@@ -119,11 +125,15 @@ const markCourseAsFavorite = async (req, res) => {
     if (!course) {
       return res.status(404).json({ message: "Course not found" });
     }
-    const courseName = course.title;
+    const courseFavorite = {
+      id: course._id,
+      image: course.image,
+      title: course.title
+    };
 
     const result = await pool.query(
-      'UPDATE users SET favorite_courses = array_append(favorite_courses, $1::text) WHERE id = $2 RETURNING *',
-      [courseName, userId]
+      'UPDATE users SET favorite_courses = array_append(favorite_courses, $1::jsonb) WHERE id = $2 RETURNING *',
+      [courseFavorite, userId]
     );
 
     if (result.rowCount === 0) {
