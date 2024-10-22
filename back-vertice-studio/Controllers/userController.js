@@ -165,7 +165,7 @@ const updateMyProfile = async (req, res) => {
             WHERE id = $6 
             RETURNING *`;
 
-        const values = [username, firstName, lastName, hashedPassword, userId, avatar];
+        const values = [username, firstName, lastName, hashedPassword, avatar, userId];
 
         const userResult = await pool.query(query, values);
 
