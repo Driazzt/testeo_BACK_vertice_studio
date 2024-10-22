@@ -3,6 +3,7 @@ const pool = new Pool({
   connectionString: process.env.POSTGRES_URL,
 });
 const coursesModel = require("../Models/coursesModel");
+const {verifyUserById} = require("../Controllers/loginController");
 
 //! COURSES
 
@@ -30,35 +31,32 @@ const getAllCourses = async (req, res) => {
 };
 
 const createCourses = async (req, res) => {
+  const { html, css, title, description, category, duration, level, instructor, price, image, userId, courseId } = req.body;
+  
   try {
-    const {
-      title,
-      description,
-      category,
-      duration,
-      level,
-      instructor,
-      price,
-      image,
-      lessons,
-      screens,
-    } = req.body;
-    const courses = await coursesModel.create({
-      title,
-      description,
-      category,
-      duration,
-      level,
-      instructor,
-      price,
-      image,
-      lessons,
-      screens,
-    });
-
-    res.status(200).json({ status: "Success", courses: courses });
-  } catch (error) {
-    res.status(500).json({ status: "Failed", error: error.message });
+    await verifyUserById(userId);  //Aquí hacemos la verificación de usuario en PostgreSQL
+    if (courseId) {
+      return updateCourseById(req, res);
+    } else {
+      const newCourse = new coursesModel({ 
+        title, 
+        description, 
+        category, 
+        duration, 
+        level, 
+        instructor, 
+        price, 
+        image, 
+        createdBy: userId, 
+        html, 
+        css,
+        lessons: req.body.lessons
+      });
+      const savedCourse = await newCourse.save();
+      return res.status(201).json(savedCourse);
+    }
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
   }
 };
 
@@ -74,7 +72,7 @@ const getCoursesById = async (req, res) => {
   }
 };
 
-const updateCoursesById = async (req, res) => {
+const updateCourseById = async (req, res) => {
   try {
     const {
       title,
@@ -87,6 +85,8 @@ const updateCoursesById = async (req, res) => {
       image,
       lessons,
       screens,
+      html,
+      css,
     } = req.body;
     const course = await coursesModel.findByIdAndUpdate(
       req.params._id,
@@ -101,6 +101,8 @@ const updateCoursesById = async (req, res) => {
         image,
         lessons,
         screens,
+        html,
+        css,
       },
       { new: true }
     );
@@ -216,6 +218,7 @@ const getLessonById = async (req, res) => {
     res.status(500).json({ status: "Failed", error: error.message });
   }
 };
+
 const createLesson = async (req, res) => {
   const { _id } = req.params;
   const { title, content, media, screens } = req.body;
@@ -367,7 +370,7 @@ const getScreenById = async (req, res) => {
 
     res.status(200).json({ status: "Success", screen: screen });
   } catch (error) {
-    res.status(500).json({ status: "Failed", error: error.message });
+    res.status (500).json({ status: "Failed", error: error.message });
   }
 };
 
@@ -434,8 +437,8 @@ const deleteScreenById = async (req, res) => {
 module.exports = {
   getAllCourses,
   createCourses,
-  getCoursesById,
-  updateCoursesById,
+  getCoursesById, 
+  updateCourseById, 
   deleteCoursesById,
   markCourseAsFavorite,
   removeCourseFromFavorites,
@@ -449,4 +452,5 @@ module.exports = {
   getScreenById,
   updateScreenById,
   deleteScreenById,
+  verifyUserById
 };

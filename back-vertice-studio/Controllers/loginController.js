@@ -6,7 +6,6 @@ const replaceTemplateEmail = require('../Templates/replaceTemplateEmail');
 const { emailSignupTemplate } = require('../Templates/template');
 const { sendMail } = require('../Services/services');
 const { emailForgotPasswordTemplate } = require("../Templates/emailForgotPasswordTemplate");
-const Course = require('../Models/coursesModel'); 
 
 const pool = new Pool({
   connectionString: process.env.POSTGRES_URL,
@@ -163,6 +162,22 @@ const verifyUser = async (req, res) => {
   }
 };
 
+const verifyUserById = async (userId) => {
+  try {
+    const userResult = await pool.query('SELECT * FROM users WHERE id = $1', [userId]);
+    const user = userResult.rows[0];
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    return user;
+  } catch (error) {
+    console.error('Error verifying user by ID', error.stack);
+    throw error;
+  }
+};
+
 const generateToken = (user, isRefreshToken = false) => {
   const payload = {
     userId: user.id,
@@ -197,7 +212,6 @@ const getRefreshToken = async (req, res) => {
 
     const user = rows[0];
 
-    // Creamos Payload para los nuevos tokens
     const payload = {
       userId: user.id,
       firstName: user.first_name,
@@ -275,4 +289,4 @@ const resetPassword = async (req, res) => {
   }
 };
 
-module.exports = { login, register, getRefreshToken, verifyUser, forgotPassword, resetPassword };
+module.exports = { login, register, getRefreshToken, verifyUser, verifyUserById, forgotPassword, resetPassword };
