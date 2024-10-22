@@ -11,12 +11,9 @@ const screenSchema = new mongoose.Schema({
     required: true,
   },
   media: {
-    type: String,  // URL de una imagen, video, etc.
+    type: String,
   },
-  quiz: {
-    type: Object,
-  }
-}, { _id: true });  // Asegura que cada pantalla tenga un identificador único
+}, { _id: true });
 
 const lessonSchema = new mongoose.Schema({
   title: {
@@ -28,12 +25,9 @@ const lessonSchema = new mongoose.Schema({
     required: true,
   },
   media: {
-    type: String,  // URL de una imagen, video, etc.
+    type: String,
   },
-  quiz: {
-    type: Object,
-  },
-  screens: [screenSchema]  // Array de pantallas dentro de una lección
+  screens: [screenSchema]
 }, { _id: true });
 
 const coursesSchema = new mongoose.Schema({
@@ -73,7 +67,7 @@ const coursesSchema = new mongoose.Schema({
     required: true,
   },
   lessons: {
-    type: [lessonSchema],  // Array de lecciones dentro de un curso
+    type: [lessonSchema],
     required: true,
     min: 1,
   },

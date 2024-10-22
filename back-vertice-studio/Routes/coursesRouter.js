@@ -12,7 +12,16 @@ const {
   deleteCoursesById,
   markCourseAsFavorite,
   removeCourseFromFavorites,
+  getAllLessons,
   getLessonById,
+  createLesson,
+  updateLessonById,
+  deleteLessonById,
+  createScreen,
+  getAllScreens,
+  getScreenById,
+  updateScreenById,
+  deleteScreenById,
 } = require ("../Controllers/coursesController");
 
 //! Rutas
@@ -114,6 +123,24 @@ router.patch("/updateCourse/:_id", verifyToken, verifyRoles('administrator', 'au
 
 router.delete("/deleteCourse/:_id", verifyToken, verifyRoles('administrator', 'editor'), deleteCoursesById);
 
+router.get('/:_id/lessons', verifyToken, getAllLessons);
+
 router.get('/:_id/lessons/:lessonId', verifyToken, getLessonById);
+
+router.post('/:_id/lessons', verifyToken, createLesson);
+
+router.patch('/:_id/lessons/:lessonId', verifyToken, updateLessonById);
+
+router.delete('/:_id/lessons/:lessonId', verifyToken, deleteLessonById);
+
+router.post('/:_id/lessons/:lessonId/screens', verifyToken, createScreen);
+
+router.get('/:_id/lessons/:lessonId/screens', verifyToken, getAllScreens);
+
+router.get('/:_id/lessons/:lessonId/screens/:screenId', verifyToken, getScreenById);
+
+router.patch('/:_id/lessons/:lessonId/screens/:screenId', verifyToken, updateScreenById);
+
+router.delete('/:_id/lessons/:lessonId/screens/:screenId', verifyToken, deleteScreenById);
 
 module.exports = router;

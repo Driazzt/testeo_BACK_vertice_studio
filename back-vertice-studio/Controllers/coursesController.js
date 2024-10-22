@@ -4,6 +4,8 @@ const pool = new Pool({
 });
 const coursesModel = require("../Models/coursesModel");
 
+//! COURSES
+
 const getAllCourses = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -123,6 +125,8 @@ const deleteCoursesById = async (req, res) => {
   }
 };
 
+//! FAVORITES
+
 const markCourseAsFavorite = async (req, res) => {
   const { userId, courseId } = req.body;
 
@@ -179,6 +183,22 @@ const removeCourseFromFavorites = async (req, res) => {
   }
 };
 
+//! LESSONS
+
+const getAllLessons = async (req, res) => {
+  try {
+    const course = await coursesModel.findById(req.params._id);
+    if (!course) {
+      return res.status(404).json({ status: "Failed", message: "Course not found" });
+    }
+
+    const lessons = course.lessons;
+    res.status(200).json({ status: "Success", lessons: lessons });
+  } catch (error) {
+    res.status(500).json({ status: "Failed", error: error.message });
+  }
+};
+
 const getLessonById = async (req, res) => {
   try {
     const course = await coursesModel.findById(req.params._id);
@@ -186,13 +206,226 @@ const getLessonById = async (req, res) => {
       return res.status(404).json({ status: "Failed", message: "Course not found" });
     }
 
-    // Encuentra la lección específica dentro del array de lecciones
     const lesson = course.lessons.id(req.params.lessonId);
     if (!lesson) {
       return res.status(404).json({ status: "Failed", message: "Lesson not found" });
     }
 
     res.status(200).json({ status: "Success", lesson: lesson });
+  } catch (error) {
+    res.status(500).json({ status: "Failed", error: error.message });
+  }
+};
+const createLesson = async (req, res) => {
+  const { _id } = req.params;
+  const { title, content, media, screens } = req.body;
+
+  try {
+    const course = await coursesModel.findById(_id);
+    if (!course) {
+      return res.status(404).json({ status: "Failed", message: "Course not found" });
+    }
+
+    const newLesson = {
+      title,
+      content,
+      media,
+      screens
+    };
+
+    course.lessons.push(newLesson);
+    await course.save();
+
+    res.status(201).json({ status: "Success", lesson: newLesson });
+  } catch (error) {
+    res.status(500).json({ status: "Failed", error: error.message });
+  }
+};
+
+const updateLessonById = async (req, res) => {
+  const { _id, lessonId } = req.params;
+  const { title, content, media, screens } = req.body;
+
+  try {
+    const course = await coursesModel.findById(_id);
+    if (!course) {
+      return res.status(404).json({ status: "Failed", message: "Course not found" });
+    }
+
+    const lesson = course.lessons.id(lessonId);
+    if (!lesson) {
+      return res.status(404).json({ status: "Failed", message: "Lesson not found" });
+    }
+
+    if (title) lesson.title = title;
+    if (content) lesson.content = content;
+    if (media) lesson.media = media;
+    if (screens) lesson.screens = screens;
+
+    await course.save();
+
+    res.status(200).json({ status: "Success", lesson: lesson });
+  } catch (error) {
+    res.status(500).json({ status: "Failed", error: error.message });
+  }
+};
+
+const deleteLessonById = async (req, res) => {
+  const { _id, lessonId } = req.params;
+
+  try {
+    const course = await coursesModel.findById(_id);
+    if (!course) {
+      return res.status(404).json({ status: "Failed", message: "Course not found" });
+    }
+
+    const lesson = course.lessons.id(lessonId);
+    if (!lesson) {
+      return res.status(404).json({ status: "Failed", message: "Lesson not found" });
+    }
+
+    course.lessons.pull(lessonId);
+    await course.save();
+
+    res.status(200).json({ status: "Success", message: "Lesson deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ status: "Failed", error: error.message });
+  }
+};
+
+//! SCREENS
+
+const createScreen = async (req, res) => {
+  const { _id, lessonId } = req.params;
+  const { title, content, media } = req.body;
+
+  try {
+    const course = await coursesModel.findById(_id);
+    if (!course) {
+      return res.status(404).json({ status: "Failed", message: "Course not found" });
+    }
+
+    const lesson = course.lessons.id(lessonId);
+    if (!lesson) {
+      return res.status(404).json({ status: "Failed", message: "Lesson not found" });
+    }
+
+    const newScreen = {
+      title,
+      content,
+      media,
+    };
+
+    lesson.screens.push(newScreen);
+    await course.save();
+
+    res.status(201).json({ status: "Success", screen: newScreen });
+  } catch (error) {
+    res.status(500).json({ status: "Failed", error: error.message });
+  }
+};
+
+const getAllScreens = async (req, res) => {
+  const { _id, lessonId } = req.params;
+
+  try {
+    const course = await coursesModel.findById(_id);
+    if (!course) {
+      return res.status(404).json({ status: "Failed", message: "Course not found" });
+    }
+
+    const lesson = course.lessons.id(lessonId);
+    if (!lesson) {
+      return res.status(404).json({ status: "Failed", message: "Lesson not found" });
+    }
+
+    const screens = lesson.screens;
+    res.status(200).json({ status: "Success", screens: screens });
+  } catch (error) {
+    res.status(500).json({ status: "Failed", error: error.message });
+  }
+};
+
+const getScreenById = async (req, res) => {
+  const { _id, lessonId, screenId } = req.params;
+
+  try {
+    const course = await coursesModel.findById(_id);
+    if (!course) {
+      return res.status(404).json({ status: "Failed", message: "Course not found" });
+    }
+
+    const lesson = course.lessons.id(lessonId);
+    if (!lesson) {
+      return res.status(404).json({ status: "Failed", message: "Lesson not found" });
+    }
+
+    const screen = lesson.screens.id(screenId);
+    if (!screen) {
+      return res.status(404).json({ status: "Failed", message: "Screen not found" });
+    }
+
+    res.status(200).json({ status: "Success", screen: screen });
+  } catch (error) {
+    res.status(500).json({ status: "Failed", error: error.message });
+  }
+};
+
+const updateScreenById = async (req, res) => {
+  const { _id, lessonId, screenId } = req.params;
+  const { title, content, media } = req.body;
+
+  try {
+    const course = await coursesModel.findById(_id);
+    if (!course) {
+      return res.status(404).json({ status: "Failed", message: "Course not found" });
+    }
+
+    const lesson = course.lessons.id(lessonId);
+    if (!lesson) {
+      return res.status(404).json({ status: "Failed", message: "Lesson not found" });
+    }
+
+    const screen = lesson.screens.id(screenId);
+    if (!screen) {
+      return res.status(404).json({ status: "Failed", message: "Screen not found" });
+    }
+
+    if (title) screen.title = title;
+    if (content) screen.content = content;
+    if (media) screen.media = media;
+
+    await course.save();
+
+    res.status(200).json({ status: "Success", screen: screen });
+  } catch (error) {
+    res.status(500).json({ status: "Failed", error: error.message });
+  }
+};
+
+const deleteScreenById = async (req, res) => {
+  const { _id, lessonId, screenId } = req.params;
+
+  try {
+    const course = await coursesModel.findById(_id);
+    if (!course) {
+      return res.status(404).json({ status: "Failed", message: "Course not found" });
+    }
+
+    const lesson = course.lessons.id(lessonId);
+    if (!lesson) {
+      return res.status(404).json({ status: "Failed", message: "Lesson not found" });
+    }
+
+    const screen = lesson.screens.id(screenId);
+    if (!screen) {
+      return res.status(404).json({ status: "Failed", message: "Screen not found" });
+    }
+
+    lesson.screens.pull(screenId);
+    await course.save();
+
+    res.status(200).json({ status: "Success", message: "Screen deleted successfully" });
   } catch (error) {
     res.status(500).json({ status: "Failed", error: error.message });
   }
@@ -207,4 +440,13 @@ module.exports = {
   markCourseAsFavorite,
   removeCourseFromFavorites,
   getLessonById,
+  getAllLessons,
+  createLesson,
+  updateLessonById,
+  deleteLessonById,
+  createScreen,
+  getAllScreens,
+  getScreenById,
+  updateScreenById,
+  deleteScreenById,
 };
