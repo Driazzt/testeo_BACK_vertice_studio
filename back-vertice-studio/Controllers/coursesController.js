@@ -74,7 +74,7 @@ const getCoursesById = async (req, res) => {
   }
 };
 
-const updateCoursesById = async (req, res) => {
+const updateCourseById = async (req, res) => {
   try {
     const {
       title,
@@ -439,7 +439,7 @@ module.exports = {
   getAllCourses,
   createCourses,
   getCoursesById,
-  updateCoursesById,
+  updateCourseById,
   deleteCoursesById,
   markCourseAsFavorite,
   removeCourseFromFavorites,

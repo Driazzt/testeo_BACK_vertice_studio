@@ -8,7 +8,7 @@ const {
   getAllCourses,
   createCourses,
   getCoursesById,
-  updateCoursesById,
+  updateCourseById,
   deleteCoursesById,
   markCourseAsFavorite,
   removeCourseFromFavorites,
@@ -195,7 +195,7 @@ router.get("/getCoursesById/:_id", verifyToken, verifyRoles('administrator', 'au
  *        description: Error al obtener los cursos por ID
  */
 
-router.patch("/updateCourse/:_id", verifyToken, verifyRoles('administrator', 'author', 'designer', 'editor'), updateCoursesById);
+router.patch("/updateCourse/:_id", verifyToken, verifyRoles('administrator', 'author', 'designer', 'editor'), updateCourseById);
 /**
  * @swagger
  * /courses/updateCourse/{_id}:
