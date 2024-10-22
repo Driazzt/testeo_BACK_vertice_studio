@@ -2,8 +2,8 @@ const express = require("express");
 const router = express.Router();
 const verifyToken = require("../Middlewares/auth");
 const verifyRoles = require("../Middlewares/verifyRoles");
-//!Enrutados
 
+//! Enrutados
 const {
   getAllCourses,
   createCourses,
@@ -22,7 +22,7 @@ const {
   getScreenById,
   updateScreenById,
   deleteScreenById,
-} = require ("../Controllers/coursesController");
+} = require("../Controllers/coursesController");
 
 //! Rutas
 // http://localhost:8000/api-doc -> para ver los swaggers.
@@ -292,6 +292,8 @@ router.delete("/deleteCourse/:_id", verifyToken, verifyRoles('administrator', 'e
  *      404:
  *        description: Course not found
  */
+
+//router.post("/saveCourse", verifyToken, verifyRoles('administrator', 'author', 'designer', 'editor'), saveCourse);
 
 router.get('/:_id/lessons', verifyToken, getAllLessons);
 /**
