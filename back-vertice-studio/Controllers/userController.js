@@ -146,7 +146,7 @@ const getMyProfile = async (req, res) => {
 };
 const updateMyProfile = async (req, res) => {
     const userId = req.payload.userId;
-    const { username, firstName, lastName, password } = req.body;
+    const { username, firstName, lastName, password, avatar } = req.body;
 
     try {
         let hashedPassword = null;
@@ -160,11 +160,12 @@ const updateMyProfile = async (req, res) => {
                 username = COALESCE($1, username), 
                 first_name = COALESCE($2, first_name), 
                 last_name = COALESCE($3, last_name), 
-                password = COALESCE($4, password)
-            WHERE id = $5 
+                password = COALESCE($4, password),
+                avatar = COALESCE($5, avatar)
+            WHERE id = $6 
             RETURNING *`;
 
-        const values = [username, firstName, lastName, hashedPassword, userId];
+        const values = [username, firstName, lastName, hashedPassword, userId, avatar];
 
         const userResult = await pool.query(query, values);
 
