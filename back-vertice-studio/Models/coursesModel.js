@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
 
 const screenSchema = new mongoose.Schema({
   title: {
@@ -11,6 +10,12 @@ const screenSchema = new mongoose.Schema({
     required: true,
   },
   media: {
+    type: String,
+  },
+  html: { 
+    type: String,
+  },
+  css: { 
     type: String,
   },
 }, { _id: true });
@@ -27,7 +32,13 @@ const lessonSchema = new mongoose.Schema({
   media: {
     type: String,
   },
-  screens: [screenSchema]
+  html: { 
+    type: String,
+  },
+  css: { 
+    type: String,
+  },
+  screens: [screenSchema], 
 }, { _id: true });
 
 const coursesSchema = new mongoose.Schema({
@@ -71,8 +82,7 @@ const coursesSchema = new mongoose.Schema({
     required: true,
     min: 1,
   },
-},
-{ timestamps: true });
+}, { timestamps: true });
 
 const coursesModel = mongoose.model("Courses", coursesSchema, "courses");
 
