@@ -162,21 +162,6 @@ const verifyUser = async (req, res) => {
   }
 };
 
-const verifyUserById = async (userId) => {
-  try {
-    const userResult = await pool.query('SELECT * FROM users WHERE id = $1', [userId]);
-    const user = userResult.rows[0];
-
-    if (!user) {
-      throw new Error('User not found');
-    }
-
-    return user;
-  } catch (error) {
-    console.error('Error verifying user by ID', error.stack);
-    throw error;
-  }
-};
 
 const generateToken = (user, isRefreshToken = false) => {
   const payload = {
@@ -289,4 +274,4 @@ const resetPassword = async (req, res) => {
   }
 };
 
-module.exports = { login, register, getRefreshToken, verifyUser, verifyUserById, forgotPassword, resetPassword };
+module.exports = { login, register, getRefreshToken, verifyUser, forgotPassword, resetPassword };

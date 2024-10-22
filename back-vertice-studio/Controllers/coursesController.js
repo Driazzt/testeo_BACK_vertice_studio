@@ -4,7 +4,6 @@ const pool = new Pool({
 });
 const coursesModel = require("../Models/coursesModel");
 const {verifyUserById} = require("../Controllers/loginController");
-
 //! COURSES
 
 const getAllCourses = async (req, res) => {
@@ -31,10 +30,9 @@ const getAllCourses = async (req, res) => {
 };
 
 const createCourses = async (req, res) => {
-  const { html, css, title, description, category, duration, level, instructor, price, image, userId, courseId } = req.body;
+  const { html, css, title, description, category, duration, level, instructor, price, image, courseId } = req.body;
   
   try {
-    await verifyUserById(userId);  //Aquí hacemos la verificación de usuario en PostgreSQL
     if (courseId) {
       return updateCourseById(req, res);
     } else {
@@ -47,10 +45,9 @@ const createCourses = async (req, res) => {
         instructor, 
         price, 
         image, 
-        createdBy: userId, 
         html, 
         css,
-        lessons: req.body.lessons
+        lessons: req.body.lessons // Asegúrate de incluir las lecciones
       });
       const savedCourse = await newCourse.save();
       return res.status(201).json(savedCourse);
