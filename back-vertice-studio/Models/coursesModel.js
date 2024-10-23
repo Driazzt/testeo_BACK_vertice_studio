@@ -23,11 +23,11 @@ const screenSchema = new mongoose.Schema({
 const lessonSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: true,
+    required: false,
   },
   content: {
     type: String,
-    required: true,
+    required: false,
   },
   media: {
     type: String,
@@ -39,7 +39,7 @@ const lessonSchema = new mongoose.Schema({
     type: String,
   },
   screens: [screenSchema], 
-}, { _id: true });
+}, { _id: false });
 
 const coursesSchema = new mongoose.Schema({
   title: {
@@ -83,10 +83,18 @@ const coursesSchema = new mongoose.Schema({
   },
   lessons: {
     type: [lessonSchema],
-    required: true,
+    required: false,
     min: 1,
   },
-}, { timestamps: true });
+  author: {
+    type: String,
+    required: true,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
 
 const coursesModel = mongoose.model("Courses", coursesSchema, "courses");
 

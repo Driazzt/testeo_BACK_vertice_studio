@@ -3,7 +3,12 @@ const pool = new Pool({
   connectionString: process.env.POSTGRES_URL,
 });
 const coursesModel = require("../Models/coursesModel");
-const {verifyUserById} = require("../Controllers/loginController");
+const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
+require('dotenv').config();
+
+mongoose.connect(process.env.DATA_URL_MONGO);
+
 //! COURSES
 
 const getAllCourses = async (req, res) => {
@@ -30,9 +35,10 @@ const getAllCourses = async (req, res) => {
 };
 
 const createCourses = async (req, res) => {
-  const { html, css, title, description, category, duration, level, instructor, price, image, lessons, courseId } = req.body;
+  const { html, css, title, description, category, duration, level, instructor, price, image, lessons,author, courseId } = req.body;
   
   try {
+
     if (courseId) {
       return updateCourseById(req, res);
     } else {
@@ -48,12 +54,13 @@ const createCourses = async (req, res) => {
         html, 
         css,
         lessons,
+        author,
       });
       const savedCourse = await newCourse.save();
-      return res.status(201).json(savedCourse);
+      return res.status(201).json({ status: "Success", course: savedCourse });
     }
   } catch (err) {
-    return res.status(500).json({ error: err.message });
+    return res.status(500).json({ status: "Failed", error: err.message });
   }
 };
 
@@ -71,6 +78,7 @@ const getCoursesById = async (req, res) => {
 
 const updateCourseById = async (req, res) => {
   try {
+
     const {
       title,
       description,
@@ -85,6 +93,7 @@ const updateCourseById = async (req, res) => {
       html,
       css,
     } = req.body;
+
     const course = await coursesModel.findByIdAndUpdate(
       req.params._id,
       {
@@ -100,12 +109,15 @@ const updateCourseById = async (req, res) => {
         screens,
         html,
         css,
+        author,
       },
       { new: true }
     );
+
     if (!course) {
       return res.status(404).json({ status: "Failed", message: "Course not found" });
     }
+
     res.status(200).json({ status: "Success", course: course });
   } catch (error) {
     res.status(500).json({ status: "Failed", error: error.message });
@@ -128,20 +140,20 @@ const deleteCoursesById = async (req, res) => {
 
 const publishCourse = async (req, res) => {
   try {
-      const course = await coursesModel.findByIdAndUpdate(
-          req.params.courseId,
-          { published: true },
-          { new: true }
-      );
-      if (!course) {
-          return res.status(404).send({ message: 'Course not found' });
-      }
-      if (course.published) {
-          return res.status(400).send({ message: 'Course already published' });
-      }
-      res.send({ status: 'success', courseId: course._id, published: course.published });
+    const course = await coursesModel.findByIdAndUpdate(
+      req.params.courseId,
+      { published: true },
+      { new: true }
+    );
+    if (!course) {
+      return res.status(404).send({ message: 'Course not found' });
+    }
+    if (course.published) {
+      return res.status(400).send({ message: 'Course already published' });
+    }
+    res.send({ status: 'success', courseId: course._id, published: course.published });
   } catch (error) {
-      res.status(500).send({ message: error.message });
+    res.status(500).send({ message: error.message });
   }
 };
 
@@ -392,7 +404,7 @@ const getScreenById = async (req, res) => {
 
     res.status(200).json({ status: "Success", screen: screen });
   } catch (error) {
-    res.status (500).json({ status: "Failed", error: error.message });
+    res.status(500).json({ status: "Failed", error: error.message });
   }
 };
 
@@ -456,6 +468,45 @@ const deleteScreenById = async (req, res) => {
   }
 };
 
+
+// Sincronización entre PostgreSQL y MongoDB
+
+const syncCourseMetadata = async () => {
+  try {
+    const courses = await coursesModel.find();
+
+    for (const course of courses) {
+      const { _id, title, author, createdAt } = course;
+
+      if (!createdAt) {
+        console.error(`Course ${_id} does not have a valid createdAt field`);
+        continue;
+      }
+
+      if (!author) {
+        console.error(`Course ${_id} does not have a valid author field`);
+        continue;
+      }
+
+      const authorResult = await pool.query('SELECT username FROM users WHERE id = $1', [author]);
+      const authorName = authorResult.rows.length > 0 ? authorResult.rows[0].username : 'Unknown';
+
+      if (authorName === 'Unknown') {
+        console.error(`Author with ID ${author} not found in PostgreSQL`);
+      }
+
+      await pool.query(
+        'INSERT INTO course_metadata (course_id, title, author, created_at) VALUES ($1, $2, $3, $4) ON CONFLICT (course_id) DO UPDATE SET title = $2, author = $3, created_at = $4',
+        [_id.toString(), title, authorName, createdAt]
+      );
+    }
+    console.log('Course metadata synchronized successfully');
+  } catch (error) {
+    console.error('Error synchronizing course metadata:', error);
+  }
+};
+
+
 module.exports = {
   getAllCourses,
   createCourses,
@@ -475,4 +526,7 @@ module.exports = {
   getScreenById,
   updateScreenById,
   deleteScreenById,
+  updateCourses,
+  syncCourseMetadata,
+  updateAuthors,
 };
