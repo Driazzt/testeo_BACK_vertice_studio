@@ -77,6 +77,10 @@ const coursesSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  published: {
+    type: Boolean,
+    default: false,
+  },
   lessons: {
     type: [lessonSchema],
     required: true,
