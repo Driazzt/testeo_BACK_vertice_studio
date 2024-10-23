@@ -10,6 +10,7 @@ const {
   getCoursesById,
   updateCourseById,
   deleteCoursesById,
+  publishCourse,
   markCourseAsFavorite,
   removeCourseFromFavorites,
   getAllLessons,
@@ -299,6 +300,49 @@ router.delete("/deleteCourse/:_id", verifyToken, verifyRoles('administrator', 'e
  *        description: Unauthorized
  *      404:
  *        description: Course not found
+ */
+
+router.patch('/publishCourse/:courseId', verifyToken, verifyRoles('administrator', 'editor'), publishCourse);
+/**
+ * @swagger
+ * /courses/publishCourse/{courseId}:
+ *  patch:
+ *    summary: Publicar un curso
+ *    parameters:
+ *      - in: header
+ *        name: auth-token
+ *        required: true
+ *        schema:
+ *          type: string
+ *      - in: path
+ *        name: courseId
+ *        required: true
+ *        description: ID del curso a publicar
+ *        schema:
+ *          type: string
+ *    responses:
+ *      200:
+ *        description: Curso publicado exitosamente
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                status:
+ *                  type: string
+ *                  example: success
+ *                courseId:
+ *                  type: string
+ *                  example: 60d0fe4f5311236168a109ca
+ *                published:
+ *                  type: boolean
+ *                  example: true
+ *      401:
+ *        description: Unauthorized
+ *      404:
+ *        description: Curso no encontrado
+ *      500:
+ *        description: Error interno del servidor
  */
 
 router.get('/:_id/lessons', verifyToken, getAllLessons);

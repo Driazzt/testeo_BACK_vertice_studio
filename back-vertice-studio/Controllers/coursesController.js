@@ -124,6 +124,27 @@ const deleteCoursesById = async (req, res) => {
   }
 };
 
+//! PUBLISHED COURSES
+
+const publishCourse = async (req, res) => {
+  try {
+      const course = await coursesModel.findByIdAndUpdate(
+          req.params.courseId,
+          { published: true },
+          { new: true }
+      );
+      if (!course) {
+          return res.status(404).send({ message: 'Course not found' });
+      }
+      if (course.published) {
+          return res.status(400).send({ message: 'Course already published' });
+      }
+      res.send({ status: 'success', courseId: course._id, published: course.published });
+  } catch (error) {
+      res.status(500).send({ message: error.message });
+  }
+};
+
 //! FAVORITES
 
 const markCourseAsFavorite = async (req, res) => {
@@ -441,6 +462,7 @@ module.exports = {
   getCoursesById, 
   updateCourseById, 
   deleteCoursesById,
+  publishCourse,
   markCourseAsFavorite,
   removeCourseFromFavorites,
   getLessonById,
