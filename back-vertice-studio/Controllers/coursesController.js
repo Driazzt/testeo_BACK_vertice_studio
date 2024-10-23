@@ -453,5 +453,4 @@ module.exports = {
   getScreenById,
   updateScreenById,
   deleteScreenById,
-  verifyUserById
 };
