@@ -27,7 +27,7 @@ const {
 //! Rutas
 // http://localhost:8000/api-doc -> para ver los swaggers.
 
-router.get("/getAllCourses", verifyToken, verifyRoles('administrator', 'author', 'designer', 'editor'), getAllCourses);
+router.get("/getAllCourses", verifyToken, getAllCourses);
 /**
  * @swagger
  * /courses/getAllCourses:
@@ -45,7 +45,7 @@ router.get("/getAllCourses", verifyToken, verifyRoles('administrator', 'author',
  *         description: Unauthorized
  */
 
-router.post("/createCourses", verifyToken, verifyRoles('administrator', 'author', 'designer', 'editor'), createCourses);
+router.post("/createCourses", verifyToken, createCourses);
 /**
  * @swagger
  * /courses/createCourses:
@@ -174,7 +174,7 @@ router.post('/removeFavoriteCourse', verifyToken, removeCourseFromFavorites);
  *        description: Unauthorized
  */
 
-router.get("/getCoursesById/:_id", verifyToken, verifyRoles('administrator', 'author', 'designer', 'editor'), getCoursesById);
+router.get("/getCoursesById/:_id", verifyToken, getCoursesById);
 /**
  * @swagger
  * /courses/getCoursesById/{_id}:
@@ -199,7 +199,7 @@ router.get("/getCoursesById/:_id", verifyToken, verifyRoles('administrator', 'au
  *        description: Error al obtener los cursos por ID
  */
 
-router.patch("/updateCourse/:_id", verifyToken, verifyRoles('administrator', 'author', 'designer', 'editor'), updateCourseById);
+router.patch("/updateCourse/:_id", verifyToken, updateCourseById);
 /**
  * @swagger
  * /courses/updateCourse/{_id}:

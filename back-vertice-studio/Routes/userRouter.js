@@ -13,6 +13,6 @@ router.patch("/updateMyProfile", verifyToken, updateMyProfile);
 router.get("/getUserById/:id", verifyToken, verifyRoles('administrator'), getUserById);
 router.patch("/updateUser/:id", verifyToken, verifyRoles('administrator'), updateUser);
 router.delete("/deleteUser/:id", verifyToken, verifyRoles('administrator'), deleteUser);
-router.patch("/updateLastVisitedCourse", verifyToken, verifyRoles('administrator', 'author', 'designer', 'editor'), updateLastVisitedCourse);
+router.patch("/updateLastVisitedCourse", verifyToken, updateLastVisitedCourse);
 
 module.exports = router;
