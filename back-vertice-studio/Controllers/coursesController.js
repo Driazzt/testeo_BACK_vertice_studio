@@ -30,7 +30,7 @@ const getAllCourses = async (req, res) => {
 };
 
 const createCourses = async (req, res) => {
-  const { html, css, title, description, category, duration, level, instructor, price, image, courseId } = req.body;
+  const { html, css, title, description, category, duration, level, instructor, price, image, lessons, courseId } = req.body;
   
   try {
     if (courseId) {
@@ -47,7 +47,7 @@ const createCourses = async (req, res) => {
         image, 
         html, 
         css,
-        lessons: req.body.lessons // Asegúrate de incluir las lecciones
+        lessons,
       });
       const savedCourse = await newCourse.save();
       return res.status(201).json(savedCourse);
