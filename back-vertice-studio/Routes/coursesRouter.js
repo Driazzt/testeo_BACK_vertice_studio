@@ -81,6 +81,10 @@ router.post("/createCourses", verifyToken, verifyRoles('administrator', 'author'
  *                type: number
  *              image:
  *                type: string
+ *              html:
+ *                type: string
+ *              css:
+ *                type: string
  *              lessons:
  *                type: array
  *                items:
@@ -235,6 +239,10 @@ router.patch("/updateCourse/:_id", verifyToken, verifyRoles('administrator', 'au
  *              price:
  *                type: number
  *              image:
+ *                type: string
+ *              html:
+ *                type: string
+ *              css:
  *                type: string
  *              lessons:
  *                type: array
