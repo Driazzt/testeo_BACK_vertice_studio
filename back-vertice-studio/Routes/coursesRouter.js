@@ -293,8 +293,6 @@ router.delete("/deleteCourse/:_id", verifyToken, verifyRoles('administrator', 'e
  *        description: Course not found
  */
 
-//router.post("/saveCourse", verifyToken, verifyRoles('administrator', 'author', 'designer', 'editor'), saveCourse);
-
 router.get('/:_id/lessons', verifyToken, getAllLessons);
 /**
  * @swagger
