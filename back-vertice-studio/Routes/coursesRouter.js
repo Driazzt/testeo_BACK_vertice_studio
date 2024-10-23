@@ -25,10 +25,8 @@ const {
   deleteScreenById,
 } = require("../Controllers/coursesController");
 
-//! Rutas
-// http://localhost:8000/api-doc -> para ver los swaggers.
+//! http://localhost:8000/api-doc-mongo -> para ver los swaggers de MongoDB PORT 8000.
 
-router.get("/getAllCourses", verifyToken, getAllCourses);
 /**
  * @swagger
  * /courses/getAllCourses:
@@ -45,8 +43,8 @@ router.get("/getAllCourses", verifyToken, getAllCourses);
  *       401:
  *         description: Unauthorized
  */
+router.get("/getAllCourses", verifyToken, getAllCourses);
 
-router.post("/createCourses", verifyToken, createCourses);
 /**
  * @swagger
  * /courses/createCourses:
@@ -114,8 +112,8 @@ router.post("/createCourses", verifyToken, createCourses);
  *      401:
  *        description: Unauthorized
  */
+router.post("/createCourses", verifyToken, createCourses);
 
-router.post('/favoriteCourse', verifyToken, markCourseAsFavorite);
 /**
  * @swagger
  * /courses/favoriteCourse:
@@ -144,8 +142,8 @@ router.post('/favoriteCourse', verifyToken, markCourseAsFavorite);
  *      401:
  *        description: Unauthorized
  */
+router.post('/favoriteCourse', verifyToken, markCourseAsFavorite);
 
-router.post('/removeFavoriteCourse', verifyToken, removeCourseFromFavorites);
 /**
  * @swagger
  * /courses/removeFavoriteCourse:
@@ -174,8 +172,8 @@ router.post('/removeFavoriteCourse', verifyToken, removeCourseFromFavorites);
  *      401:
  *        description: Unauthorized
  */
+router.post('/removeFavoriteCourse', verifyToken, removeCourseFromFavorites);
 
-router.get("/getCoursesById/:_id", verifyToken, getCoursesById);
 /**
  * @swagger
  * /courses/getCoursesById/{_id}:
@@ -199,8 +197,8 @@ router.get("/getCoursesById/:_id", verifyToken, getCoursesById);
  *      404:
  *        description: Error al obtener los cursos por ID
  */
+router.get("/getCoursesById/:_id", verifyToken, getCoursesById);
 
-router.patch("/updateCourse/:_id", verifyToken, updateCourseById);
 /**
  * @swagger
  * /courses/updateCourse/{_id}:
@@ -275,8 +273,8 @@ router.patch("/updateCourse/:_id", verifyToken, updateCourseById);
  *      404:
  *        description: Course not found
  */
+router.patch("/updateCourse/:_id", verifyToken, updateCourseById);
 
-router.delete("/deleteCourse/:_id", verifyToken, verifyRoles('administrator', 'editor'), deleteCoursesById);
 /**
  * @swagger
  * /courses/deleteCourse/{_id}:
@@ -301,8 +299,8 @@ router.delete("/deleteCourse/:_id", verifyToken, verifyRoles('administrator', 'e
  *      404:
  *        description: Course not found
  */
+router.delete("/deleteCourse/:_id", verifyToken, verifyRoles('administrator', 'editor'), deleteCoursesById);
 
-router.patch('/publishCourse/:courseId', verifyToken, verifyRoles('administrator', 'editor'), publishCourse);
 /**
  * @swagger
  * /courses/publishCourse/{courseId}:
@@ -344,8 +342,8 @@ router.patch('/publishCourse/:courseId', verifyToken, verifyRoles('administrator
  *      500:
  *        description: Error interno del servidor
  */
+router.patch('/publishCourse/:courseId', verifyToken, verifyRoles('administrator', 'editor'), publishCourse);
 
-router.get('/:_id/lessons', verifyToken, getAllLessons);
 /**
  * @swagger
  * /courses/{_id}/lessons:
@@ -370,8 +368,8 @@ router.get('/:_id/lessons', verifyToken, getAllLessons);
  *      404:
  *        description: Course not found
  */
+router.get('/:_id/lessons', verifyToken, getAllLessons);
 
-router.get('/:_id/lessons/:lessonId', verifyToken, getLessonById);
 /**
  * @swagger
  * /courses/{_id}/lessons/{lessonId}:
@@ -401,8 +399,8 @@ router.get('/:_id/lessons/:lessonId', verifyToken, getLessonById);
  *      404:
  *        description: Lesson not found
  */
+router.get('/:_id/lessons/:lessonId', verifyToken, getLessonById);
 
-router.post('/:_id/lessons', verifyToken, createLesson);
 /**
  * @swagger
  * /courses/{_id}/lessons:
@@ -449,8 +447,8 @@ router.post('/:_id/lessons', verifyToken, createLesson);
  *      401:
  *        description: Unauthorized
  */
+router.post('/:_id/lessons', verifyToken, createLesson);
 
-router.patch('/:_id/lessons/:lessonId', verifyToken, updateLessonById);
 /**
  * @swagger
  * /courses/{_id}/lessons/{lessonId}:
@@ -504,8 +502,8 @@ router.patch('/:_id/lessons/:lessonId', verifyToken, updateLessonById);
  *      404:
  *        description: Lesson not found
  */
+router.patch('/:_id/lessons/:lessonId', verifyToken, updateLessonById);
 
-router.delete('/:_id/lessons/:lessonId', verifyToken, deleteLessonById);
 /**
  * @swagger
  * /courses/{_id}/lessons/{lessonId}:
@@ -535,8 +533,8 @@ router.delete('/:_id/lessons/:lessonId', verifyToken, deleteLessonById);
  *      404:
  *        description: Lesson not found
  */
+router.delete('/:_id/lessons/:lessonId', verifyToken, deleteLessonById);
 
-router.post('/:_id/lessons/:lessonId/screens', verifyToken, createScreen);
 /**
  * @swagger
  * /courses/{_id}/lessons/{lessonId}/screens:
@@ -566,8 +564,8 @@ router.post('/:_id/lessons/:lessonId/screens', verifyToken, createScreen);
  *      404:
  *        description: Lesson not found
  */
+router.post('/:_id/lessons/:lessonId/screens', verifyToken, createScreen);
 
-router.get('/:_id/lessons/:lessonId/screens', verifyToken, getAllScreens);
 /**
  * @swagger
  * /courses/{_id}/lessons/{lessonId}/screens/{screenId}:
@@ -602,8 +600,8 @@ router.get('/:_id/lessons/:lessonId/screens', verifyToken, getAllScreens);
  *      404:
  *        description: Screen not found
  */
+router.get('/:_id/lessons/:lessonId/screens', verifyToken, getAllScreens);
 
-router.get('/:_id/lessons/:lessonId/screens/:screenId', verifyToken, getScreenById);
 /**
  * @swagger
  * /courses/{_id}/lessons/{lessonId}/screens:
@@ -644,8 +642,8 @@ router.get('/:_id/lessons/:lessonId/screens/:screenId', verifyToken, getScreenBy
  *      401:
  *        description: Unauthorized
  */
+router.get('/:_id/lessons/:lessonId/screens/:screenId', verifyToken, getScreenById);
 
-router.patch('/:_id/lessons/:lessonId/screens/:screenId', verifyToken, updateScreenById);
 /**
  * @swagger
  * /courses/{_id}/lessons/{lessonId}/screens/{screenId}:
@@ -693,8 +691,8 @@ router.patch('/:_id/lessons/:lessonId/screens/:screenId', verifyToken, updateScr
  *      404:
  *        description: Screen not found
  */
+router.patch('/:_id/lessons/:lessonId/screens/:screenId', verifyToken, updateScreenById);
 
-router.delete('/:_id/lessons/:lessonId/screens/:screenId', verifyToken, deleteScreenById);
 /**
  * @swagger
  * /courses/{_id}/lessons/{lessonId}/screens/{screenId}:
@@ -732,5 +730,6 @@ router.delete('/:_id/lessons/:lessonId/screens/:screenId', verifyToken, deleteSc
  *       404:
  *         description: Screen not found
  */
+router.delete('/:_id/lessons/:lessonId/screens/:screenId', verifyToken, deleteScreenById);
 
 module.exports = router;
