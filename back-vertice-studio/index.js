@@ -14,6 +14,7 @@ const { Pool } = require("pg");
 
 
 const cors = require('cors');
+const coursesModel = require("./Models/coursesModel");
 const corsOptions = {
   origin: 'http://localhost:3000',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
