@@ -6,7 +6,7 @@ const swaggerConfigMongo = {
     info: {
       title: "Vertice Studio - MongoDB - PostgreSQL",
       version: "1.0.0",
-      description: "API para gestionar cursos en MongoDB",
+      description: "API para gestionar usuarios, cursos y autenticaciones en PostgreSQL y MongoDB",
     },
     server: {
       url: "http://localhost:8000",
@@ -22,7 +22,7 @@ const swaggerConfigPostgreSQL = {
     info: {
       title: "Vertice Studio - MongoDB - PostgreSQL",
       version: "1.0.0",
-      description: "API para gestionar usuarios y autenticación en PostgreSQL",
+      description: "API para gestionar usuarios, cursos y autenticaciones en PostgreSQL y MongoDB",
     },
     server: {
       url: "http://localhost:5432",
