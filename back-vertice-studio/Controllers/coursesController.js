@@ -57,7 +57,9 @@ const createCourses = async (req, res) => {
         author,
       });
       const savedCourse = await newCourse.save();
-      await syncCourseMetadata();
+      
+      syncCourseMetadata().catch(error => console.error('Error synchronizing course metadata:', error));
+
       return res.status(201).json({ status: "Success", course: savedCourse });
     }
   } catch (err) {
