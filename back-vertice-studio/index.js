@@ -1,6 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const swaggerConfig = require("./swaggerConfig");
+const { swaggerSpecMongo, swaggerSpecPostgreSQL } = require("./swaggerConfig");
 const swaggerUI = require("swagger-ui-express");
 const loginRouter = require("./Routes/loginRouter");
 const userRouter = require("./Routes/userRouter");
@@ -70,8 +70,10 @@ db.on("disconnected", () => {
 
 appPostgres.use("/login", loginRouter);
 appPostgres.use("/user", userRouter);
+appPostgres.use("/api-doc-postgres", swaggerUI.serve, swaggerUI.setup(swaggerSpecPostgreSQL));
+
 appMongo.use("/courses", coursesRouter);
-appMongo.use("/api-doc", swaggerUI.serve, swaggerUI.setup(swaggerConfig));
+appMongo.use("/api-doc-mongo", swaggerUI.serve, swaggerUI.setup(swaggerSpecMongo));
 
 
 // Puertos:

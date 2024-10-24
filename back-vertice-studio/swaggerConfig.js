@@ -1,12 +1,12 @@
 const swaggerJSDoc = require("swagger-jsdoc");
 
-const swaggerConfig = {
+const swaggerConfigMongo = {
   swaggerDefinition: {
     openapi: "3.0.0",
     info: {
-      title: "Vertice Studio",
+      title: "Vertice Studio - MongoDB - PostgreSQL",
       version: "1.0.0",
-      description: "Update Vertice Studio App",
+      description: "API para gestionar usuarios, cursos y autenticaciones en PostgreSQL y MongoDB",
     },
     server: {
       url: "http://localhost:8000",
@@ -16,6 +16,23 @@ const swaggerConfig = {
   apis: ["./Routes/*.js"],
 };
 
-const swagger = swaggerJSDoc(swaggerConfig);
+const swaggerConfigPostgreSQL = {
+  swaggerDefinition: {
+    openapi: "3.0.0",
+    info: {
+      title: "Vertice Studio - MongoDB - PostgreSQL",
+      version: "1.0.0",
+      description: "API para gestionar usuarios, cursos y autenticaciones en PostgreSQL y MongoDB",
+    },
+    server: {
+      url: "http://localhost:5432",
+      description: "Local Server PostgreSQL"
+    }
+  },
+  apis: ["./Routes/*.js"],
+};
 
-module.exports = swagger;
+const swaggerSpecMongo = swaggerJSDoc(swaggerConfigMongo);
+const swaggerSpecPostgreSQL = swaggerJSDoc(swaggerConfigPostgreSQL);
+
+module.exports = { swaggerSpecMongo, swaggerSpecPostgreSQL };
