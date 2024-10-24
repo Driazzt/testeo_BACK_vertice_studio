@@ -31,6 +31,7 @@ const {
  * @swagger
  * /courses/getAllCourses:
  *  get:
+ *    tags: [Courses | PORT 8000]
  *    parameters:
  *      - in: header
  *        name: auth-token
@@ -49,6 +50,7 @@ router.get("/getAllCourses", verifyToken, getAllCourses);
  * @swagger
  * /courses/createCourses:
  *  post:
+ *    tags: [Courses | PORT 8000]
  *    summary: Create a new course
  *    parameters:
  *      - in: header
@@ -118,6 +120,7 @@ router.post("/createCourses", verifyToken, createCourses);
  * @swagger
  * /courses/favoriteCourse:
  *  post:
+ *    tags: [Courses | PORT 8000]
  *    summary: Mark a course as favorite
  *    parameters:
  *      - in: header
@@ -148,6 +151,7 @@ router.post('/favoriteCourse', verifyToken, markCourseAsFavorite);
  * @swagger
  * /courses/removeFavoriteCourse:
  *  post:
+ *    tags: [Courses | PORT 8000]
  *    summary: Remove a course from favorites
  *    parameters:
  *      - in: header
@@ -178,6 +182,7 @@ router.post('/removeFavoriteCourse', verifyToken, removeCourseFromFavorites);
  * @swagger
  * /courses/getCoursesById/{_id}:
  *  get:
+ *    tags: [Courses | PORT 8000]
  *    summary: Obtener los cursos por ID
  *    parameters:
  *      - in: path
@@ -203,6 +208,7 @@ router.get("/getCoursesById/:_id", verifyToken, getCoursesById);
  * @swagger
  * /courses/updateCourse/{_id}:
  *  patch:
+ *    tags: [Courses | PORT 8000]
  *    summary: Update course by ID
  *    parameters:
  *      - in: header
@@ -279,6 +285,7 @@ router.patch("/updateCourse/:_id", verifyToken, updateCourseById);
  * @swagger
  * /courses/deleteCourse/{_id}:
  *  delete:
+ *    tags: [Courses | PORT 8000]
  *    summary: Delete course by ID
  *    parameters:
  *      - in: header
@@ -305,6 +312,7 @@ router.delete("/deleteCourse/:_id", verifyToken, verifyRoles('administrator', 'e
  * @swagger
  * /courses/publishCourse/{courseId}:
  *  patch:
+ *    tags: [Courses | PORT 8000]
  *    summary: Publicar un curso
  *    parameters:
  *      - in: header
@@ -348,6 +356,7 @@ router.patch('/publishCourse/:courseId', verifyToken, verifyRoles('administrator
  * @swagger
  * /courses/{_id}/lessons:
  *  get:
+ *    tags: [Courses-Lessons | PORT 8000]
  *    summary: Get all lessons of a course
  *    parameters:
  *      - in: header
@@ -374,6 +383,7 @@ router.get('/:_id/lessons', verifyToken, getAllLessons);
  * @swagger
  * /courses/{_id}/lessons/{lessonId}:
  *  get:
+ *    tags: [Courses-Lessons | PORT 8000]
  *    summary: Get lesson by ID
  *    parameters:
  *      - in: header
@@ -405,6 +415,7 @@ router.get('/:_id/lessons/:lessonId', verifyToken, getLessonById);
  * @swagger
  * /courses/{_id}/lessons:
  *  post:
+ *    tags: [Courses-Lessons | PORT 8000]
  *    summary: Create a new lesson
  *    parameters:
  *      - in: header
@@ -453,6 +464,7 @@ router.post('/:_id/lessons', verifyToken, createLesson);
  * @swagger
  * /courses/{_id}/lessons/{lessonId}:
  *  patch:
+ *    tags: [Courses-Lessons | PORT 8000]
  *    summary: Update lesson by ID
  *    parameters:
  *      - in: header
@@ -508,6 +520,7 @@ router.patch('/:_id/lessons/:lessonId', verifyToken, updateLessonById);
  * @swagger
  * /courses/{_id}/lessons/{lessonId}:
  *  delete:
+ *    tags: [Courses-Lessons | PORT 8000]
  *    summary: Delete lesson by ID
  *    parameters:
  *      - in: header
@@ -539,6 +552,7 @@ router.delete('/:_id/lessons/:lessonId', verifyToken, deleteLessonById);
  * @swagger
  * /courses/{_id}/lessons/{lessonId}/screens:
  *  get:
+ *    tags: [Courses-Lessons-Screens | PORT 8000]
  *    summary: Get all screens of a lesson
  *    parameters:
  *      - in: header
@@ -570,6 +584,7 @@ router.post('/:_id/lessons/:lessonId/screens', verifyToken, createScreen);
  * @swagger
  * /courses/{_id}/lessons/{lessonId}/screens/{screenId}:
  *  get:
+ *    tags: [Courses-Lessons-Screens | PORT 8000]
  *    summary: Get screen by ID
  *    parameters:
  *      - in: header
@@ -606,6 +621,7 @@ router.get('/:_id/lessons/:lessonId/screens', verifyToken, getAllScreens);
  * @swagger
  * /courses/{_id}/lessons/{lessonId}/screens:
  *  post:
+ *    tags: [Courses-Lessons-Screens | PORT 8000]
  *    summary: Create a new screen
  *    parameters:
  *      - in: header
@@ -648,6 +664,7 @@ router.get('/:_id/lessons/:lessonId/screens/:screenId', verifyToken, getScreenBy
  * @swagger
  * /courses/{_id}/lessons/{lessonId}/screens/{screenId}:
  *  patch:
+ *    tags: [Courses-Lessons-Screens | PORT 8000]
  *    summary: Update screen by ID
  *    parameters:
  *      - in: header
@@ -697,6 +714,7 @@ router.patch('/:_id/lessons/:lessonId/screens/:screenId', verifyToken, updateScr
  * @swagger
  * /courses/{_id}/lessons/{lessonId}/screens/{screenId}:
  *   delete:
+ *    tags: [Courses-Lessons-Screens | PORT 8000]
  *     summary: Delete screen by ID
  *     parameters:
  *       - in: header

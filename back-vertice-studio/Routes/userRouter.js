@@ -11,6 +11,7 @@ const router = express.Router();
  * @swagger
  * /user/createUser:
  *  post:
+ *    tags: [User | PORT 5432]
  *    summary: Crear un nuevo usuario
  *    parameters:
  *      - in: header
@@ -64,6 +65,7 @@ router.post("/createUser", verifyToken, passwordValidator, verifyRoles('administ
  * @swagger
  * /user/getAllUsers:
  *  get:
+ *    tags: [User | PORT 5432]
  *    summary: Obtener todos los usuarios
  *    parameters:
  *      - in: header
@@ -85,6 +87,7 @@ router.get("/getAllUsers", verifyToken, verifyRoles('administrator'), getAllUser
  * @swagger
  * /user/getMyProfile:
  *  get:
+ *    tags: [User - Profile | PORT 5432]
  *    summary: Obtener el perfil del usuario autenticado
  *    parameters:
  *      - in: header
@@ -104,6 +107,7 @@ router.get("/getMyProfile", verifyToken, getMyProfile);
  * @swagger
  * /user/updateMyProfile:
  *  patch:
+ *    tags: [User - Profile | PORT 5432]
  *    summary: Actualizar el perfil del usuario autenticado
  *    parameters:
  *      - in: header
@@ -145,6 +149,7 @@ router.patch("/updateMyProfile", verifyToken, updateMyProfile);
  * @swagger
  * /user/getUserById/{id}:
  *  get:
+ *    tags: [User | PORT 5432]
  *    summary: Obtener un usuario por ID
  *    parameters:
  *      - in: header
@@ -174,6 +179,7 @@ router.get("/getUserById/:id", verifyToken, verifyRoles('administrator'), getUse
  * @swagger
  * /user/updateUser/{id}:
  *  patch:
+ *    tags: [User | PORT 5432]
  *    summary: Actualizar un usuario por ID
  *    parameters:
  *      - in: header
@@ -225,6 +231,7 @@ router.patch("/updateUser/:id", verifyToken, verifyRoles('administrator'), updat
  * @swagger
  * /user/deleteUser/{id}:
  *  delete:
+ *    tags: [User | PORT 5432]
  *    summary: Eliminar un usuario por ID
  *    parameters:
  *      - in: header
@@ -254,6 +261,7 @@ router.delete("/deleteUser/:id", verifyToken, verifyRoles('administrator'), dele
  * @swagger
  * /user/updateLastVisitedCourse:
  *  patch:
+ *    tags: [User | PORT 5432]
  *    summary: Actualizar el último curso visitado del usuario autenticado
  *    parameters:
  *      - in: header

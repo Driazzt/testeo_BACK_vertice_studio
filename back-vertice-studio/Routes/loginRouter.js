@@ -19,6 +19,7 @@ const {
  * @swagger
  * /login/login:
  *  post:
+ *    tags: [Login | PORT 5432]
  *    summary: Iniciar sesión
  *    requestBody:
  *      required: true
@@ -43,6 +44,7 @@ router.post("/login", login);
  * @swagger
  * /login/register:
  *  post:
+ *    tags: [Login | PORT 5432]
  *    summary: Registrar un nuevo usuario
  *    requestBody:
  *      required: true
@@ -73,6 +75,7 @@ router.post("/register", passwordValidator, register);
  * @swagger
  * /login/verify:
  *  get:
+ *    tags: [Login | PORT 5432]
  *    summary: Verificar usuario
  *    parameters:
  *      - in: query
@@ -92,6 +95,7 @@ router.get("/verify", verifyUser);
  * @swagger
  * /login/forgotPassword:
  *  post:
+ *    tags: [Login | PORT 5432]
  *    summary: Solicitar restablecimiento de contraseña
  *    requestBody:
  *      required: true
@@ -114,6 +118,7 @@ router.post("/forgotPassword", forgotPassword)
  * @swagger
  * /login/getRefreshToken:
  *  get:
+ *    tags: [Login | PORT 5432]
  *    summary: Obtener un nuevo token de acceso
  *    parameters:
  *      - in: header
@@ -133,6 +138,7 @@ router.get("/getRefreshToken", verifyToken, getRefreshToken);
  * @swagger
  * /login/resetPassword:
  *  post:
+ *    tags: [Login | PORT 5432]
  *    summary: Restablecer la contraseña
  *    requestBody:
  *      required: true
