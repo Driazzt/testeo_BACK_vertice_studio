@@ -39,7 +39,7 @@ const lessonSchema = new mongoose.Schema({
     type: String,
   },
   screens: [screenSchema], 
-}, { _id: false });
+}, { _id: true });
 
 const coursesSchema = new mongoose.Schema({
   title: {
