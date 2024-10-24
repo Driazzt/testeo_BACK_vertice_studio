@@ -3,7 +3,6 @@ const pool = new Pool({
   connectionString: process.env.POSTGRES_URL,
 });
 const coursesModel = require("../Models/coursesModel");
-const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 require('dotenv').config();
 
@@ -35,8 +34,9 @@ const getAllCourses = async (req, res) => {
 };
 
 const createCourses = async (req, res) => {
-  const { html, css, title, description, category, duration, level, instructor, price, image, lessons,author, courseId } = req.body;
-  
+  const { html, css, title, description, category, duration, level, instructor, price, image, lessons, courseId} = req.body;
+  const author = req.payload.userId;
+  console.log(req.payload);
   try {
 
     if (courseId) {
@@ -57,6 +57,7 @@ const createCourses = async (req, res) => {
         author,
       });
       const savedCourse = await newCourse.save();
+      await syncCourseMetadata();
       return res.status(201).json({ status: "Success", course: savedCourse });
     }
   } catch (err) {
@@ -93,7 +94,7 @@ const updateCourseById = async (req, res) => {
       html,
       css,
     } = req.body;
-
+    const author = req.payload.userId;
     const course = await coursesModel.findByIdAndUpdate(
       req.params._id,
       {
@@ -117,6 +118,8 @@ const updateCourseById = async (req, res) => {
     if (!course) {
       return res.status(404).json({ status: "Failed", message: "Course not found" });
     }
+
+    await syncCourseMetadata();
 
     res.status(200).json({ status: "Success", course: course });
   } catch (error) {
@@ -469,7 +472,7 @@ const deleteScreenById = async (req, res) => {
 };
 
 
-// Sincronización entre PostgreSQL y MongoDB
+//! Sincronización entre PostgreSQL y MongoDB
 
 const syncCourseMetadata = async () => {
   try {
@@ -478,21 +481,11 @@ const syncCourseMetadata = async () => {
     for (const course of courses) {
       const { _id, title, author, createdAt } = course;
 
-      if (!createdAt) {
-        console.error(`Course ${_id} does not have a valid createdAt field`);
-        continue;
-      }
-
-      if (!author) {
-        console.error(`Course ${_id} does not have a valid author field`);
-        continue;
-      }
-
       const authorResult = await pool.query('SELECT username FROM users WHERE id = $1', [author]);
       const authorName = authorResult.rows.length > 0 ? authorResult.rows[0].username : 'Unknown';
 
       if (authorName === 'Unknown') {
-        console.error(`Author with ID ${author} not found in PostgreSQL`);
+        //console.error(`Author with ID ${author} not found in PostgreSQL`);
       }
 
       await pool.query(
@@ -526,7 +519,5 @@ module.exports = {
   getScreenById,
   updateScreenById,
   deleteScreenById,
-  updateCourses,
   syncCourseMetadata,
-  updateAuthors,
 };
