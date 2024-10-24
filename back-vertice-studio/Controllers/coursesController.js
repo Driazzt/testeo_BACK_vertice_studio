@@ -119,8 +119,6 @@ const updateCourseById = async (req, res) => {
       return res.status(404).json({ status: "Failed", message: "Course not found" });
     }
 
-    await syncCourseMetadata();
-
     res.status(200).json({ status: "Success", course: course });
   } catch (error) {
     res.status(500).json({ status: "Failed", error: error.message });
