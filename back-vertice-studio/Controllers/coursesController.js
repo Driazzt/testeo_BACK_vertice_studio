@@ -258,7 +258,7 @@ const getLessonById = async (req, res) => {
 
 const createLesson = async (req, res) => {
   const { _id } = req.params;
-  const { title, content, media, screens } = req.body;
+  const { title, content, media, screens, html, css } = req.body;
 
   try {
     const course = await coursesModel.findById(_id);
@@ -270,7 +270,9 @@ const createLesson = async (req, res) => {
       title,
       content,
       media,
-      screens
+      screens,
+      html,
+      css,
     };
 
     course.lessons.push(newLesson);
@@ -337,7 +339,7 @@ const deleteLessonById = async (req, res) => {
 
 const createScreen = async (req, res) => {
   const { _id, lessonId } = req.params;
-  const { title, content, media } = req.body;
+  const { title, content, media, html, css } = req.body;
 
   try {
     const course = await coursesModel.findById(_id);
@@ -352,8 +354,10 @@ const createScreen = async (req, res) => {
 
     const newScreen = {
       title,
-      content,
+      content: `<div>${content}</div>`,
       media,
+      html,
+      css,
     };
 
     lesson.screens.push(newScreen);
