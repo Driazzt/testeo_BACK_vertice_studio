@@ -714,7 +714,7 @@ router.patch('/:_id/lessons/:lessonId/screens/:screenId', verifyToken, updateScr
  * @swagger
  * /courses/{_id}/lessons/{lessonId}/screens/{screenId}:
  *   delete:
- *    tags: [Courses-Lessons-Screens | PORT 8000]
+ *     tags: [Courses-Lessons-Screens | PORT 8000]
  *     summary: Delete screen by ID
  *     parameters:
  *       - in: header
